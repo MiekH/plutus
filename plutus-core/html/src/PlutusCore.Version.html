@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE DeriveAnyClass  #-}</span><span>
+</span><span id="line-2"></span><span class="hs-pragma">{-# LANGUAGE TemplateHaskell #-}</span><span>
+</span><span id="line-3"></span><span>
+</span><span id="line-4"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">PlutusCore.Version</span><span> </span><span class="hs-special">(</span><span>
+</span><span id="line-5"></span><span>  </span><span class="annot"><a href="PlutusCore.Version.html#Version"><span class="hs-identifier">Version</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span>
+</span><span id="line-6"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="PlutusCore.Version.html#versionMajor"><span class="hs-identifier">versionMajor</span></a></span><span>
+</span><span id="line-7"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="PlutusCore.Version.html#versionMinor"><span class="hs-identifier">versionMinor</span></a></span><span>
+</span><span id="line-8"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="PlutusCore.Version.html#versionPatch"><span class="hs-identifier">versionPatch</span></a></span><span>
+</span><span id="line-9"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="PlutusCore.Version.html#defaultVersion"><span class="hs-identifier">defaultVersion</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-10"></span><span>
+</span><span id="line-11"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="PlutusPrelude.html"><span class="hs-identifier">PlutusPrelude</span></a></span><span>
+</span><span id="line-12"></span><span>
+</span><span id="line-13"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="../../../../lens/html/src"><span class="hs-identifier">Control.Lens</span></a></span><span>
+</span><span id="line-14"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="../../../../hashable/html/src"><span class="hs-identifier">Data.Hashable</span></a></span><span>
+</span><span id="line-15"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="../../../../th-lift-instances/html/src"><span class="hs-identifier">Instances.TH.Lift</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-16"></span><span>
+</span><span id="line-17"></span><span class="hs-comment">{- |
+The version of Plutus Core used by this program.
+
+The intention is to convey different levels of backwards compatibility for existing scripts:
+- Major version changes are backwards-incompatible
+- Minor version changes are backwards-compatible
+- Patch version changes should be entirely invisible (and we will likely not use this level)
+
+The version used should be changed only when the /language itself/ changes.
+For example, adding a new kind of term to the language would require a minor
+version bump; removing a kind of term would require a major version bump.
+
+Similarly, changing the semantics of the language will require a version bump,
+typically a major one. This is the main reason why the version is actually
+tracked in the AST: we can have two language versions with identical ASTs but
+different semantics, so we need to track the version explicitly.
+
+Compatibility is about compatibility for specific scripts, not about e.g. tools which consume
+scripts. Adding a new kind of term does not change how existing scripts behave, but does
+change what tools would need to do to process scripts.
+-}</span><span>
+</span><span id="line-38"></span><span id="local-6989586621680808465"><span id="local-6989586621680808466"></span></span><span class="hs-keyword">data</span><span> </span><span id="Version"><span class="annot"><a href="PlutusCore.Version.html#Version"><span class="hs-identifier hs-var">Version</span></a></span></span><span>
+</span><span id="line-39"></span><span>    </span><span class="hs-glyph">=</span><span> </span><span id="Version"><span class="annot"><a href="PlutusCore.Version.html#Version"><span class="hs-identifier hs-var">Version</span></a></span></span><span> </span><span class="hs-special">{</span><span> </span><span id="_versionMajor"><span class="annot"><span class="annottext">Version -&gt; Natural
+</span><a href="PlutusCore.Version.html#_versionMajor"><span class="hs-identifier hs-var hs-var">_versionMajor</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/ghc-bignum-1.2/src"><span class="hs-identifier hs-type">Natural</span></a></span><span class="hs-special">,</span><span> </span><span id="_versionMinor"><span class="annot"><span class="annottext">Version -&gt; Natural
+</span><a href="PlutusCore.Version.html#_versionMinor"><span class="hs-identifier hs-var hs-var">_versionMinor</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/ghc-bignum-1.2/src"><span class="hs-identifier hs-type">Natural</span></a></span><span class="hs-special">,</span><span> </span><span id="_versionPatch"><span class="annot"><span class="annottext">Version -&gt; Natural
+</span><a href="PlutusCore.Version.html#_versionPatch"><span class="hs-identifier hs-var hs-var">_versionPatch</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/ghc-bignum-1.2/src"><span class="hs-identifier hs-type">Natural</span></a></span><span> </span><span class="hs-special">}</span><span>
+</span><span id="line-40"></span><span>    </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">stock</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621680808453"><span id="local-6989586621680808459"><span class="annot"><span class="annottext">Version -&gt; Version -&gt; Bool
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: Version -&gt; Version -&gt; Bool
+$c/= :: Version -&gt; Version -&gt; Bool
+== :: Version -&gt; Version -&gt; Bool
+$c== :: Version -&gt; Version -&gt; Bool
+</span><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621680808440"><span id="local-6989586621680808442"><span id="local-6989586621680808450"><span class="annot"><span class="annottext">Int -&gt; Version -&gt; ShowS
+[Version] -&gt; ShowS
+Version -&gt; String
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [Version] -&gt; ShowS
+$cshowList :: [Version] -&gt; ShowS
+show :: Version -&gt; String
+$cshow :: Version -&gt; String
+showsPrec :: Int -&gt; Version -&gt; ShowS
+$cshowsPrec :: Int -&gt; Version -&gt; ShowS
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></a></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">forall x. Rep Version x -&gt; Version
+forall x. Version -&gt; Rep Version x
+forall a.
+(forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
+$cto :: forall x. Rep Version x -&gt; Version
+$cfrom :: forall x. Version -&gt; Rep Version x
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-41"></span><span>    </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">anyclass</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621680808434"><span class="annot"><span class="annottext">Version -&gt; ()
+forall a. (a -&gt; ()) -&gt; NFData a
+rnf :: Version -&gt; ()
+$crnf :: Version -&gt; ()
+</span><a href="../../../../ghc/html/libraries/deepseq-1.4.6.1/src"><span class="hs-identifier hs-var hs-var hs-var hs-var">NFData</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621680808427"><span id="local-6989586621680808429"><span class="annot"><span class="annottext">Eq Version
+Int -&gt; Version -&gt; Int
+Version -&gt; Int
+forall a. Eq a -&gt; (Int -&gt; a -&gt; Int) -&gt; (a -&gt; Int) -&gt; Hashable a
+hash :: Version -&gt; Int
+$chash :: Version -&gt; Int
+hashWithSalt :: Int -&gt; Version -&gt; Int
+$chashWithSalt :: Int -&gt; Version -&gt; Int
+</span><a href="../../../../hashable/html/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Hashable</span></a></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-42"></span><span>
+</span><span id="line-43"></span><span id="versionPatch"><span id="versionMinor"><span id="versionMajor"><span class="hs-identifier">makeLenses</span><span> </span><span class="hs-special">''</span><span class="hs-identifier">Version</span></span></span></span><span>
+</span><span id="line-44"></span><span>
+</span><span id="line-45"></span><span class="hs-comment">-- This is probably what the derived version would do, but better to be explicit since it's</span><span>
+</span><span id="line-46"></span><span class="hs-comment">-- important</span><span>
+</span><span id="line-47"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621680808390"><span id="local-6989586621680808392"><span id="local-6989586621680808394"><span id="local-6989586621680808396"><span id="local-6989586621680808398"><span id="local-6989586621680808400"><span class="annot"><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-type">Ord</span></a></span><span> </span><span class="annot"><a href="PlutusCore.Version.html#Version"><span class="hs-identifier hs-type">Version</span></a></span></span></span></span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-48"></span><span>  </span><span id="local-6989586621680808381"><span class="annot"><span class="annottext">compare :: Version -&gt; Version -&gt; Ordering
+</span><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var">compare</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="PlutusCore.Version.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span> </span><span id="local-6989586621680808379"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621680808379"><span class="hs-identifier hs-var">major1</span></a></span></span><span> </span><span id="local-6989586621680808378"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621680808378"><span class="hs-identifier hs-var">minor1</span></a></span></span><span> </span><span id="local-6989586621680808377"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621680808377"><span class="hs-identifier hs-var">patch1</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="PlutusCore.Version.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span> </span><span id="local-6989586621680808376"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621680808376"><span class="hs-identifier hs-var">major2</span></a></span></span><span> </span><span id="local-6989586621680808375"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621680808375"><span class="hs-identifier hs-var">minor2</span></a></span></span><span> </span><span id="local-6989586621680808374"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621680808374"><span class="hs-identifier hs-var">patch2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-49"></span><span>    </span><span class="annot"><span class="annottext">forall a. Ord a =&gt; a -&gt; a -&gt; Ordering
+</span><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-var">compare</span></a></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621680808379"><span class="hs-identifier hs-var">major1</span></a></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621680808376"><span class="hs-identifier hs-var">major2</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Ord a =&gt; a -&gt; a -&gt; Ordering
+</span><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-var">compare</span></a></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621680808378"><span class="hs-identifier hs-var">minor1</span></a></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621680808375"><span class="hs-identifier hs-var">minor2</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Ord a =&gt; a -&gt; a -&gt; Ordering
+</span><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-var">compare</span></a></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621680808377"><span class="hs-identifier hs-var">patch1</span></a></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621680808374"><span class="hs-identifier hs-var">patch2</span></a></span><span>
+</span><span id="line-50"></span><span>
+</span><span id="line-51"></span><span class="hs-comment">-- | The default version of Plutus Core supported by this library.</span><span>
+</span><span id="line-52"></span><span class="annot"><a href="PlutusCore.Version.html#defaultVersion"><span class="hs-identifier hs-type">defaultVersion</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="PlutusCore.Version.html#Version"><span class="hs-identifier hs-type">Version</span></a></span><span>
+</span><span id="line-53"></span><span id="defaultVersion"><span class="annot"><span class="annottext">defaultVersion :: Version
+</span><a href="PlutusCore.Version.html#defaultVersion"><span class="hs-identifier hs-var hs-var">defaultVersion</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Natural -&gt; Natural -&gt; Natural -&gt; Version
+</span><a href="PlutusCore.Version.html#Version"><span class="hs-identifier hs-var">Version</span></a></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><span class="hs-number">1</span></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><span class="hs-number">0</span></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><span class="hs-number">0</span></span><span>
+</span><span id="line-54"></span></pre></body></html>

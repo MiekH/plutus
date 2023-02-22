@@ -1,0 +1,610 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE FlexibleContexts #-}</span><span>
+</span><span id="line-2"></span><span class="hs-pragma">{-# LANGUAGE FlexibleInstances,UndecidableInstances ,NoMonomorphismRestriction #-}</span><span>
+</span><span id="line-3"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Flat.Instances.Mono</span><span>
+</span><span id="line-4"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#sizeSequence"><span class="hs-identifier">sizeSequence</span></a></span><span>
+</span><span id="line-5"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#encodeSequence"><span class="hs-identifier">encodeSequence</span></a></span><span>
+</span><span id="line-6"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#decodeSequence"><span class="hs-identifier">decodeSequence</span></a></span><span>
+</span><span id="line-7"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#sizeList"><span class="hs-identifier">sizeList</span></a></span><span>
+</span><span id="line-8"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#encodeList"><span class="hs-identifier">encodeList</span></a></span><span>
+</span><span id="line-9"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#decodeList"><span class="hs-identifier">decodeList</span></a></span><span>
+</span><span id="line-10"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#sizeSet"><span class="hs-identifier">sizeSet</span></a></span><span>
+</span><span id="line-11"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#encodeSet"><span class="hs-identifier">encodeSet</span></a></span><span>
+</span><span id="line-12"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#decodeSet"><span class="hs-identifier">decodeSet</span></a></span><span>
+</span><span id="line-13"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#sizeMap"><span class="hs-identifier">sizeMap</span></a></span><span>
+</span><span id="line-14"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#encodeMap"><span class="hs-identifier">encodeMap</span></a></span><span>
+</span><span id="line-15"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#decodeMap"><span class="hs-identifier">decodeMap</span></a></span><span>
+</span><span id="line-16"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#AsArray"><span class="hs-identifier">AsArray</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span>
+</span><span id="line-17"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#AsList"><span class="hs-identifier">AsList</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span>
+</span><span id="line-18"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#AsSet"><span class="hs-identifier">AsSet</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span>
+</span><span id="line-19"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#AsMap"><span class="hs-identifier">AsMap</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span>
+</span><span id="line-20"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-21"></span><span class="hs-keyword">where</span><span>
+</span><span id="line-22"></span><span>
+</span><span id="line-23"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier">Data.MonoTraversable</span></a></span><span>           </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier">Element</span></a></span><span>
+</span><span id="line-24"></span><span>                                                </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier">ofoldl'</span></a></span><span>
+</span><span id="line-25"></span><span>                                                </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier">otoList</span></a></span><span>
+</span><span id="line-26"></span><span>                                                </span><span class="hs-comment">--, olength</span><span>
+</span><span id="line-27"></span><span>                                                </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier">MonoFoldable</span></a></span><span>
+</span><span id="line-28"></span><span>                                                </span><span class="hs-special">)</span><span>
+</span><span id="line-29"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier">Data.Sequences</span></a></span><span>                 </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier">IsSequence</span></a></span><span> </span><span class="hs-special">)</span><span>
+</span><span id="line-30"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier">Data.Sequences</span></a></span><span>                </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">S</span></span><span>
+</span><span id="line-31"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier">Data.Containers</span></a></span><span>
+</span><span id="line-32"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><a href="Flat.Instances.Util.html"><span class="hs-identifier">Flat.Instances.Util</span></a></span><span>
+</span><span id="line-33"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier">Data.Foldable</span></a></span><span>                 </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">F</span></span><span>
+</span><span id="line-34"></span><span>
+</span><span id="line-35"></span><span class="hs-comment">-- $setup</span><span>
+</span><span id="line-36"></span><span class="hs-comment">-- &gt;&gt;&gt; import Flat.Instances.Base()</span><span>
+</span><span id="line-37"></span><span class="hs-comment">-- &gt;&gt;&gt; import Flat.Instances.Test</span><span>
+</span><span id="line-38"></span><span class="hs-comment">-- &gt;&gt;&gt; import Data.Word    </span><span>
+</span><span id="line-39"></span><span class="hs-comment">-- &gt;&gt;&gt; import qualified Data.Set</span><span>
+</span><span id="line-40"></span><span class="hs-comment">-- &gt;&gt;&gt; import qualified Data.Map</span><span>
+</span><span id="line-41"></span><span>
+</span><span id="line-42"></span><span class="hs-comment">{-|
+Sequences are defined as Arrays:
+
+Array v = A0
+        | A1 v (Array v)
+        | A2 v v (Array v)
+        ...
+        | A255 ... (Array v)
+
+In practice, this means that the sequence is encoded as a sequence of blocks of up to 255 elements, with every block preceded by the count of the elements in the block and a final 0-length block.
+
+Lists are defined as:
+
+List a &#8801;  Nil
+        | Cons a (List a)
+
+The AsList/AsArray wrappers can be used to serialise sequences as Lists or Arrays
+
+&gt;&gt;&gt; tst $ AsArray ([]::[()])
+(True,8,[0])
+
+&gt;&gt;&gt; tst $ AsArray [11::Word8,22,33]
+(True,40,[3,11,22,33,0])
+
+&gt;&gt;&gt; tst $ AsList ([]::[()])
+(True,1,[0])
+
+&gt;&gt;&gt; tst (AsList [11::Word8,22,33])
+(True,28,[133,197,164,32])
+
+&gt;&gt;&gt; tst (AsSet (Data.Set.fromList [11::Word8,22,33]))
+(True,28,[133,197,164,32])
+
+-}</span><span>
+</span><span id="line-76"></span><span class="hs-keyword">newtype</span><span> </span><span id="AsArray"><span class="annot"><a href="Flat.Instances.Mono.html#AsArray"><span class="hs-identifier hs-var">AsArray</span></a></span></span><span> </span><span id="local-6989586621679099209"><span class="annot"><a href="#local-6989586621679099209"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-77"></span><span>  </span><span id="AsArray"><span class="annot"><a href="Flat.Instances.Mono.html#AsArray"><span class="hs-identifier hs-var">AsArray</span></a></span></span><span>
+</span><span id="line-78"></span><span>    </span><span class="hs-special">{</span><span> </span><span id="unArray"><span class="annot"><span class="annottext">forall a. AsArray a -&gt; a
+</span><a href="Flat.Instances.Mono.html#unArray"><span class="hs-identifier hs-var hs-var">unArray</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679099209"><span class="hs-identifier hs-type">a</span></a></span><span>
+</span><span id="line-79"></span><span>    </span><span class="hs-special">}</span><span> </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679099073"><span id="local-6989586621679099075"><span id="local-6989586621679099080"><span class="annot"><span class="annottext">Int -&gt; AsArray a -&gt; ShowS
+forall a. Show a =&gt; Int -&gt; AsArray a -&gt; ShowS
+forall a. Show a =&gt; [AsArray a] -&gt; ShowS
+forall a. Show a =&gt; AsArray a -&gt; String
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [AsArray a] -&gt; ShowS
+$cshowList :: forall a. Show a =&gt; [AsArray a] -&gt; ShowS
+show :: AsArray a -&gt; String
+$cshow :: forall a. Show a =&gt; AsArray a -&gt; String
+showsPrec :: Int -&gt; AsArray a -&gt; ShowS
+$cshowsPrec :: forall a. Show a =&gt; Int -&gt; AsArray a -&gt; ShowS
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></a></span></span></span></span><span class="hs-special">,</span><span id="local-6989586621679099065"><span id="local-6989586621679099069"><span class="annot"><span class="annottext">AsArray a -&gt; AsArray a -&gt; Bool
+forall a. Eq a =&gt; AsArray a -&gt; AsArray a -&gt; Bool
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: AsArray a -&gt; AsArray a -&gt; Bool
+$c/= :: forall a. Eq a =&gt; AsArray a -&gt; AsArray a -&gt; Bool
+== :: AsArray a -&gt; AsArray a -&gt; Bool
+$c== :: forall a. Eq a =&gt; AsArray a -&gt; AsArray a -&gt; Bool
+</span><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></a></span></span></span><span class="hs-special">,</span><span id="local-6989586621679099031"><span id="local-6989586621679099035"><span id="local-6989586621679099039"><span id="local-6989586621679099043"><span id="local-6989586621679099047"><span id="local-6989586621679099051"><span id="local-6989586621679099055"><span class="annot"><span class="annottext">AsArray a -&gt; AsArray a -&gt; Bool
+AsArray a -&gt; AsArray a -&gt; Ordering
+AsArray a -&gt; AsArray a -&gt; AsArray a
+forall a.
+Eq a
+-&gt; (a -&gt; a -&gt; Ordering)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; Ord a
+forall {a}. Ord a =&gt; Eq (AsArray a)
+forall a. Ord a =&gt; AsArray a -&gt; AsArray a -&gt; Bool
+forall a. Ord a =&gt; AsArray a -&gt; AsArray a -&gt; Ordering
+forall a. Ord a =&gt; AsArray a -&gt; AsArray a -&gt; AsArray a
+min :: AsArray a -&gt; AsArray a -&gt; AsArray a
+$cmin :: forall a. Ord a =&gt; AsArray a -&gt; AsArray a -&gt; AsArray a
+max :: AsArray a -&gt; AsArray a -&gt; AsArray a
+$cmax :: forall a. Ord a =&gt; AsArray a -&gt; AsArray a -&gt; AsArray a
+&gt;= :: AsArray a -&gt; AsArray a -&gt; Bool
+$c&gt;= :: forall a. Ord a =&gt; AsArray a -&gt; AsArray a -&gt; Bool
+&gt; :: AsArray a -&gt; AsArray a -&gt; Bool
+$c&gt; :: forall a. Ord a =&gt; AsArray a -&gt; AsArray a -&gt; Bool
+&lt;= :: AsArray a -&gt; AsArray a -&gt; Bool
+$c&lt;= :: forall a. Ord a =&gt; AsArray a -&gt; AsArray a -&gt; Bool
+&lt; :: AsArray a -&gt; AsArray a -&gt; Bool
+$c&lt; :: forall a. Ord a =&gt; AsArray a -&gt; AsArray a -&gt; Bool
+compare :: AsArray a -&gt; AsArray a -&gt; Ordering
+$ccompare :: forall a. Ord a =&gt; AsArray a -&gt; AsArray a -&gt; Ordering
+</span><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></a></span></span></span></span></span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-80"></span><span>
+</span><span id="line-81"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679099194"><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">IsSequence</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099194"><span class="hs-identifier hs-type">r</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">Element</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099194"><span class="hs-identifier hs-type">r</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Flat.Instances.Mono.html#AsArray"><span class="hs-identifier hs-type">AsArray</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099194"><span class="hs-identifier hs-type">r</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-82"></span><span>  </span><span id="local-6989586621679099012"><span class="annot"><span class="annottext">size :: AsArray r -&gt; Int -&gt; Int
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Flat.Instances.Mono.html#AsArray"><span class="hs-identifier hs-type">AsArray</span></a></span><span> </span><span id="local-6989586621679099010"><span class="annot"><span class="annottext">r
+</span><a href="#local-6989586621679099010"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall mono.
+(IsSequence mono, Flat (Element mono)) =&gt;
+mono -&gt; Int -&gt; Int
+</span><a href="Flat.Instances.Mono.html#sizeSequence"><span class="hs-identifier hs-var">sizeSequence</span></a></span><span> </span><span class="annot"><span class="annottext">r
+</span><a href="#local-6989586621679099010"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-83"></span><span>  </span><span id="local-6989586621679099007"><span class="annot"><span class="annottext">encode :: AsArray r -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Flat.Instances.Mono.html#AsArray"><span class="hs-identifier hs-type">AsArray</span></a></span><span> </span><span id="local-6989586621679099005"><span class="annot"><span class="annottext">r
+</span><a href="#local-6989586621679099005"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall mono.
+(Flat (Element mono), MonoFoldable mono) =&gt;
+mono -&gt; Encoding
+</span><a href="Flat.Instances.Mono.html#encodeSequence"><span class="hs-identifier hs-var">encodeSequence</span></a></span><span> </span><span class="annot"><span class="annottext">r
+</span><a href="#local-6989586621679099005"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-84"></span><span>  </span><span id="local-6989586621679099000"><span class="annot"><span class="annottext">decode :: Get (AsArray r)
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. a -&gt; AsArray a
+</span><a href="Flat.Instances.Mono.html#AsArray"><span class="hs-identifier hs-var">AsArray</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall b. (Flat (Element b), IsSequence b) =&gt; Get b
+</span><a href="Flat.Instances.Mono.html#decodeSequence"><span class="hs-identifier hs-var">decodeSequence</span></a></span><span>
+</span><span id="line-85"></span><span>
+</span><span id="line-86"></span><span class="hs-comment">-- |Calculate size of an instance of IsSequence as the sum:</span><span>
+</span><span id="line-87"></span><span class="hs-comment">-- * of the size of all the elements</span><span>
+</span><span id="line-88"></span><span class="hs-comment">-- * plus the size of the array constructors (1 byte every 255 elements plus one final byte)</span><span>
+</span><span id="line-89"></span><span id="local-6989586621679099189"><span class="annot"><a href="Flat.Instances.Mono.html#sizeSequence"><span class="hs-identifier hs-type">sizeSequence</span></a></span><span>
+</span><span id="line-90"></span><span>  </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">IsSequence</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099189"><span class="hs-identifier hs-type">mono</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">Element</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099189"><span class="hs-identifier hs-type">mono</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679099189"><span class="hs-identifier hs-type">mono</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Flat.Types.html#NumBits"><span class="hs-identifier hs-type">NumBits</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Flat.Types.html#NumBits"><span class="hs-identifier hs-type">NumBits</span></a></span></span><span>
+</span><span id="line-91"></span><span id="sizeSequence"><span class="annot"><span class="annottext">sizeSequence :: forall mono.
+(IsSequence mono, Flat (Element mono)) =&gt;
+mono -&gt; Int -&gt; Int
+</span><a href="Flat.Instances.Mono.html#sizeSequence"><span class="hs-identifier hs-var hs-var">sizeSequence</span></a></span></span><span> </span><span id="local-6989586621679098990"><span class="annot"><span class="annottext">mono
+</span><a href="#local-6989586621679098990"><span class="hs-identifier hs-var">s</span></a></span></span><span> </span><span id="local-6989586621679098989"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098989"><span class="hs-identifier hs-var">acc</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-92"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679098984"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098984"><span class="hs-identifier hs-var">sz</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679098983"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098983"><span class="hs-identifier hs-var">len</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-93"></span><span>          </span><span class="annot"><span class="annottext">forall mono a.
+MonoFoldable mono =&gt;
+(a -&gt; Element mono -&gt; a) -&gt; a -&gt; mono -&gt; a
+</span><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-var">ofoldl'</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span class="hs-special">(</span><span id="local-6989586621679098982"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098982"><span class="hs-identifier hs-var">acc</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679098981"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098981"><span class="hs-identifier hs-var">l</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679098980"><span class="annot"><span class="annottext">Element mono
+</span><a href="#local-6989586621679098980"><span class="hs-identifier hs-var">e</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Int -&gt; Int
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="annot"><span class="annottext">Element mono
+</span><a href="#local-6989586621679098980"><span class="hs-identifier hs-var">e</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098982"><span class="hs-identifier hs-var">acc</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098981"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Num a =&gt; a -&gt; a -&gt; a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">+</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">1</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098989"><span class="hs-identifier hs-var">acc</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">0</span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Flat.Types.html#NumBits"><span class="hs-identifier hs-type">NumBits</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">mono
+</span><a href="#local-6989586621679098990"><span class="hs-identifier hs-var">s</span></a></span><span>
+</span><span id="line-94"></span><span>  </span><span class="hs-keyword">in</span><span>  </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098984"><span class="hs-identifier hs-var">sz</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Num a =&gt; a -&gt; a -&gt; a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">+</span></a></span><span> </span><span class="annot"><span class="annottext">Int -&gt; Int
+</span><a href="Flat.Encoder.Size.html#arrayBits"><span class="hs-identifier hs-var">arrayBits</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098983"><span class="hs-identifier hs-var">len</span></a></span><span>
+</span><span id="line-95"></span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#sizeSequence"><span class="hs-pragma hs-type">sizeSequence</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
+</span><span id="line-96"></span><span>
+</span><span id="line-97"></span><span class="hs-comment">-- TODO: check which one is faster</span><span>
+</span><span id="line-98"></span><span class="hs-comment">-- sizeSequence s acc = ofoldl' (flip size) acc s + arrayBits (olength s)</span><span>
+</span><span id="line-99"></span><span>
+</span><span id="line-100"></span><span class="hs-comment">-- |Encode an instance of IsSequence, as an array</span><span>
+</span><span id="line-101"></span><span id="local-6989586621679099188"><span class="annot"><a href="Flat.Instances.Mono.html#encodeSequence"><span class="hs-identifier hs-type">encodeSequence</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">Element</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099188"><span class="hs-identifier hs-type">mono</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">MonoFoldable</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099188"><span class="hs-identifier hs-type">mono</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679099188"><span class="hs-identifier hs-type">mono</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Flat.Encoder.Strict.html#Encoding"><span class="hs-identifier hs-type">Encoding</span></a></span></span><span>
+</span><span id="line-102"></span><span id="encodeSequence"><span class="annot"><span class="annottext">encodeSequence :: forall mono.
+(Flat (Element mono), MonoFoldable mono) =&gt;
+mono -&gt; Encoding
+</span><a href="Flat.Instances.Mono.html#encodeSequence"><span class="hs-identifier hs-var hs-var">encodeSequence</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; [a] -&gt; Encoding
+</span><a href="Flat.Instances.Util.html#encodeArray"><span class="hs-identifier hs-var">encodeArray</span></a></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">forall mono. MonoFoldable mono =&gt; mono -&gt; [Element mono]
+</span><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-var">otoList</span></a></span><span>
+</span><span id="line-103"></span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#encodeSequence"><span class="hs-pragma hs-type">encodeSequence</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
+</span><span id="line-104"></span><span>
+</span><span id="line-105"></span><span class="hs-comment">-- |Decode an instance of IsSequence, as an array</span><span>
+</span><span id="line-106"></span><span id="local-6989586621679099184"><span class="annot"><a href="Flat.Instances.Mono.html#decodeSequence"><span class="hs-identifier hs-type">decodeSequence</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">Element</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099184"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">IsSequence</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099184"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Decoder.Types.html#Get"><span class="hs-identifier hs-type">Get</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099184"><span class="hs-identifier hs-type">b</span></a></span></span><span>
+</span><span id="line-107"></span><span id="decodeSequence"><span class="annot"><span class="annottext">decodeSequence :: forall b. (Flat (Element b), IsSequence b) =&gt; Get b
+</span><a href="Flat.Instances.Mono.html#decodeSequence"><span class="hs-identifier hs-var hs-var">decodeSequence</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall seq. IsSequence seq =&gt; [Element seq] -&gt; seq
+</span><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-var">S.fromList</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Get a -&gt; Get [a]
+</span><a href="Flat.Decoder.Strict.html#decodeArrayWith"><span class="hs-identifier hs-var">decodeArrayWith</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span>
+</span><span id="line-108"></span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#decodeSequence"><span class="hs-pragma hs-type">decodeSequence</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
+</span><span id="line-109"></span><span>
+</span><span id="line-110"></span><span class="hs-keyword">newtype</span><span> </span><span id="AsList"><span class="annot"><a href="Flat.Instances.Mono.html#AsList"><span class="hs-identifier hs-var">AsList</span></a></span></span><span> </span><span id="local-6989586621679099172"><span class="annot"><a href="#local-6989586621679099172"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-111"></span><span>  </span><span id="AsList"><span class="annot"><a href="Flat.Instances.Mono.html#AsList"><span class="hs-identifier hs-var">AsList</span></a></span></span><span>
+</span><span id="line-112"></span><span>    </span><span class="hs-special">{</span><span> </span><span id="unList"><span class="annot"><span class="annottext">forall a. AsList a -&gt; a
+</span><a href="Flat.Instances.Mono.html#unList"><span class="hs-identifier hs-var hs-var">unList</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679099172"><span class="hs-identifier hs-type">a</span></a></span><span>
+</span><span id="line-113"></span><span>    </span><span class="hs-special">}</span><span> </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679098955"><span id="local-6989586621679098957"><span id="local-6989586621679098961"><span class="annot"><span class="annottext">Int -&gt; AsList a -&gt; ShowS
+forall a. Show a =&gt; Int -&gt; AsList a -&gt; ShowS
+forall a. Show a =&gt; [AsList a] -&gt; ShowS
+forall a. Show a =&gt; AsList a -&gt; String
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [AsList a] -&gt; ShowS
+$cshowList :: forall a. Show a =&gt; [AsList a] -&gt; ShowS
+show :: AsList a -&gt; String
+$cshow :: forall a. Show a =&gt; AsList a -&gt; String
+showsPrec :: Int -&gt; AsList a -&gt; ShowS
+$cshowsPrec :: forall a. Show a =&gt; Int -&gt; AsList a -&gt; ShowS
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></a></span></span></span></span><span class="hs-special">,</span><span id="local-6989586621679098948"><span id="local-6989586621679098952"><span class="annot"><span class="annottext">AsList a -&gt; AsList a -&gt; Bool
+forall a. Eq a =&gt; AsList a -&gt; AsList a -&gt; Bool
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: AsList a -&gt; AsList a -&gt; Bool
+$c/= :: forall a. Eq a =&gt; AsList a -&gt; AsList a -&gt; Bool
+== :: AsList a -&gt; AsList a -&gt; Bool
+$c== :: forall a. Eq a =&gt; AsList a -&gt; AsList a -&gt; Bool
+</span><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></a></span></span></span><span class="hs-special">,</span><span id="local-6989586621679098915"><span id="local-6989586621679098919"><span id="local-6989586621679098923"><span id="local-6989586621679098927"><span id="local-6989586621679098931"><span id="local-6989586621679098935"><span id="local-6989586621679098939"><span class="annot"><span class="annottext">AsList a -&gt; AsList a -&gt; Bool
+AsList a -&gt; AsList a -&gt; Ordering
+AsList a -&gt; AsList a -&gt; AsList a
+forall a.
+Eq a
+-&gt; (a -&gt; a -&gt; Ordering)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; Ord a
+forall {a}. Ord a =&gt; Eq (AsList a)
+forall a. Ord a =&gt; AsList a -&gt; AsList a -&gt; Bool
+forall a. Ord a =&gt; AsList a -&gt; AsList a -&gt; Ordering
+forall a. Ord a =&gt; AsList a -&gt; AsList a -&gt; AsList a
+min :: AsList a -&gt; AsList a -&gt; AsList a
+$cmin :: forall a. Ord a =&gt; AsList a -&gt; AsList a -&gt; AsList a
+max :: AsList a -&gt; AsList a -&gt; AsList a
+$cmax :: forall a. Ord a =&gt; AsList a -&gt; AsList a -&gt; AsList a
+&gt;= :: AsList a -&gt; AsList a -&gt; Bool
+$c&gt;= :: forall a. Ord a =&gt; AsList a -&gt; AsList a -&gt; Bool
+&gt; :: AsList a -&gt; AsList a -&gt; Bool
+$c&gt; :: forall a. Ord a =&gt; AsList a -&gt; AsList a -&gt; Bool
+&lt;= :: AsList a -&gt; AsList a -&gt; Bool
+$c&lt;= :: forall a. Ord a =&gt; AsList a -&gt; AsList a -&gt; Bool
+&lt; :: AsList a -&gt; AsList a -&gt; Bool
+$c&lt; :: forall a. Ord a =&gt; AsList a -&gt; AsList a -&gt; Bool
+compare :: AsList a -&gt; AsList a -&gt; Ordering
+$ccompare :: forall a. Ord a =&gt; AsList a -&gt; AsList a -&gt; Ordering
+</span><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></a></span></span></span></span></span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-114"></span><span>
+</span><span id="line-115"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679099167"><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">IsSequence</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099167"><span class="hs-identifier hs-type">l</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">Element</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099167"><span class="hs-identifier hs-type">l</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Flat.Instances.Mono.html#AsList"><span class="hs-identifier hs-type">AsList</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099167"><span class="hs-identifier hs-type">l</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-116"></span><span>  </span><span class="hs-comment">-- size   = sizeList . S.unpack . unList</span><span>
+</span><span id="line-117"></span><span>  </span><span class="hs-comment">-- encode = encodeList . S.unpack . unList</span><span>
+</span><span id="line-118"></span><span>  </span><span class="hs-comment">-- decode = AsList . S.fromList &lt;$&gt; decodeListotoList</span><span>
+</span><span id="line-119"></span><span>
+</span><span id="line-120"></span><span>  </span><span id="local-6989586621679098901"><span class="annot"><span class="annottext">size :: AsList l -&gt; Int -&gt; Int
+</span><a href="#local-6989586621679098901"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span>   </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall mono.
+(MonoFoldable mono, Flat (Element mono)) =&gt;
+mono -&gt; Int -&gt; Int
+</span><a href="Flat.Instances.Mono.html#sizeList"><span class="hs-identifier hs-var">sizeList</span></a></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. AsList a -&gt; a
+</span><a href="Flat.Instances.Mono.html#unList"><span class="hs-identifier hs-var">unList</span></a></span><span>
+</span><span id="line-121"></span><span>  </span><span id="local-6989586621679098898"><span class="annot"><span class="annottext">encode :: AsList l -&gt; Encoding
+</span><a href="#local-6989586621679098898"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall mono.
+(Flat (Element mono), MonoFoldable mono) =&gt;
+mono -&gt; Encoding
+</span><a href="Flat.Instances.Mono.html#encodeList"><span class="hs-identifier hs-var">encodeList</span></a></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. AsList a -&gt; a
+</span><a href="Flat.Instances.Mono.html#unList"><span class="hs-identifier hs-var">unList</span></a></span><span>
+</span><span id="line-122"></span><span>  </span><span id="local-6989586621679098894"><span class="annot"><span class="annottext">decode :: Get (AsList l)
+</span><a href="#local-6989586621679098894"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. a -&gt; AsList a
+</span><a href="Flat.Instances.Mono.html#AsList"><span class="hs-identifier hs-var">AsList</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall b. (IsSequence b, Flat (Element b)) =&gt; Get b
+</span><a href="Flat.Instances.Mono.html#decodeList"><span class="hs-identifier hs-var">decodeList</span></a></span><span>
+</span><span id="line-123"></span><span>
+</span><span id="line-124"></span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#sizeList"><span class="hs-pragma hs-type">sizeList</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
+</span><span id="line-125"></span><span id="local-6989586621679099166"><span class="annot"><a href="Flat.Instances.Mono.html#sizeList"><span class="hs-identifier hs-type">sizeList</span></a></span><span>
+</span><span id="line-126"></span><span>  </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">MonoFoldable</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099166"><span class="hs-identifier hs-type">mono</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">Element</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099166"><span class="hs-identifier hs-type">mono</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679099166"><span class="hs-identifier hs-type">mono</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Flat.Types.html#NumBits"><span class="hs-identifier hs-type">NumBits</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Flat.Types.html#NumBits"><span class="hs-identifier hs-type">NumBits</span></a></span></span><span>
+</span><span id="line-127"></span><span id="sizeList"><span class="annot"><span class="annottext">sizeList :: forall mono.
+(MonoFoldable mono, Flat (Element mono)) =&gt;
+mono -&gt; Int -&gt; Int
+</span><a href="Flat.Instances.Mono.html#sizeList"><span class="hs-identifier hs-var hs-var">sizeList</span></a></span></span><span> </span><span id="local-6989586621679098885"><span class="annot"><span class="annottext">mono
+</span><a href="#local-6989586621679098885"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679098884"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098884"><span class="hs-identifier hs-var">sz</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall mono a.
+MonoFoldable mono =&gt;
+(a -&gt; Element mono -&gt; a) -&gt; a -&gt; mono -&gt; a
+</span><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-var">ofoldl'</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679098883"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098883"><span class="hs-identifier hs-var">s</span></a></span></span><span> </span><span id="local-6989586621679098882"><span class="annot"><span class="annottext">Element mono
+</span><a href="#local-6989586621679098882"><span class="hs-identifier hs-var">e</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Int -&gt; Int
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="annot"><span class="annottext">Element mono
+</span><a href="#local-6989586621679098882"><span class="hs-identifier hs-var">e</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098883"><span class="hs-identifier hs-var">s</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Num a =&gt; a -&gt; a -&gt; a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">+</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">1</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098884"><span class="hs-identifier hs-var">sz</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Num a =&gt; a -&gt; a -&gt; a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">+</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">1</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">mono
+</span><a href="#local-6989586621679098885"><span class="hs-identifier hs-var">l</span></a></span><span>
+</span><span id="line-128"></span><span>
+</span><span id="line-129"></span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#encodeList"><span class="hs-pragma hs-type">encodeList</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
+</span><span id="line-130"></span><span id="local-6989586621679098881"><span class="annot"><a href="Flat.Instances.Mono.html#encodeList"><span class="hs-identifier hs-type">encodeList</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">Element</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679098881"><span class="hs-identifier hs-type">mono</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">MonoFoldable</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679098881"><span class="hs-identifier hs-type">mono</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679098881"><span class="hs-identifier hs-type">mono</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Flat.Encoder.Strict.html#Encoding"><span class="hs-identifier hs-type">Encoding</span></a></span></span><span>
+</span><span id="line-131"></span><span id="encodeList"><span class="annot"><span class="annottext">encodeList :: forall mono.
+(Flat (Element mono), MonoFoldable mono) =&gt;
+mono -&gt; Encoding
+</span><a href="Flat.Instances.Mono.html#encodeList"><span class="hs-identifier hs-var hs-var">encodeList</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall t. (t -&gt; Encoding) -&gt; [t] -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#encodeListWith"><span class="hs-identifier hs-var">encodeListWith</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var">encode</span></a></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">forall mono. MonoFoldable mono =&gt; mono -&gt; [Element mono]
+</span><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-var">otoList</span></a></span><span>
+</span><span id="line-132"></span><span>
+</span><span id="line-133"></span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#decodeList"><span class="hs-pragma hs-type">decodeList</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
+</span><span id="line-134"></span><span id="local-6989586621679099165"><span class="annot"><a href="Flat.Instances.Mono.html#decodeList"><span class="hs-identifier hs-type">decodeList</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">IsSequence</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099165"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">Element</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099165"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Decoder.Types.html#Get"><span class="hs-identifier hs-type">Get</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099165"><span class="hs-identifier hs-type">b</span></a></span></span><span>
+</span><span id="line-135"></span><span id="decodeList"><span class="annot"><span class="annottext">decodeList :: forall b. (IsSequence b, Flat (Element b)) =&gt; Get b
+</span><a href="Flat.Instances.Mono.html#decodeList"><span class="hs-identifier hs-var hs-var">decodeList</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall seq. IsSequence seq =&gt; [Element seq] -&gt; seq
+</span><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-var">S.fromList</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Get a -&gt; Get [a]
+</span><a href="Flat.Decoder.Strict.html#decodeListWith"><span class="hs-identifier hs-var">decodeListWith</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span>
+</span><span id="line-136"></span><span>
+</span><span id="line-137"></span><span class="hs-keyword">newtype</span><span> </span><span id="AsSet"><span class="annot"><a href="Flat.Instances.Mono.html#AsSet"><span class="hs-identifier hs-var">AsSet</span></a></span></span><span> </span><span id="local-6989586621679099160"><span class="annot"><a href="#local-6989586621679099160"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-138"></span><span>  </span><span id="AsSet"><span class="annot"><a href="Flat.Instances.Mono.html#AsSet"><span class="hs-identifier hs-var">AsSet</span></a></span></span><span>
+</span><span id="line-139"></span><span>    </span><span class="hs-special">{</span><span> </span><span id="unSet"><span class="annot"><span class="annottext">forall a. AsSet a -&gt; a
+</span><a href="Flat.Instances.Mono.html#unSet"><span class="hs-identifier hs-var hs-var">unSet</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679099160"><span class="hs-identifier hs-type">a</span></a></span><span>
+</span><span id="line-140"></span><span>    </span><span class="hs-special">}</span><span> </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679098860"><span id="local-6989586621679098862"><span id="local-6989586621679098866"><span class="annot"><span class="annottext">Int -&gt; AsSet a -&gt; ShowS
+forall a. Show a =&gt; Int -&gt; AsSet a -&gt; ShowS
+forall a. Show a =&gt; [AsSet a] -&gt; ShowS
+forall a. Show a =&gt; AsSet a -&gt; String
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [AsSet a] -&gt; ShowS
+$cshowList :: forall a. Show a =&gt; [AsSet a] -&gt; ShowS
+show :: AsSet a -&gt; String
+$cshow :: forall a. Show a =&gt; AsSet a -&gt; String
+showsPrec :: Int -&gt; AsSet a -&gt; ShowS
+$cshowsPrec :: forall a. Show a =&gt; Int -&gt; AsSet a -&gt; ShowS
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></a></span></span></span></span><span class="hs-special">,</span><span id="local-6989586621679098853"><span id="local-6989586621679098857"><span class="annot"><span class="annottext">AsSet a -&gt; AsSet a -&gt; Bool
+forall a. Eq a =&gt; AsSet a -&gt; AsSet a -&gt; Bool
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: AsSet a -&gt; AsSet a -&gt; Bool
+$c/= :: forall a. Eq a =&gt; AsSet a -&gt; AsSet a -&gt; Bool
+== :: AsSet a -&gt; AsSet a -&gt; Bool
+$c== :: forall a. Eq a =&gt; AsSet a -&gt; AsSet a -&gt; Bool
+</span><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></a></span></span></span><span class="hs-special">,</span><span id="local-6989586621679098820"><span id="local-6989586621679098824"><span id="local-6989586621679098828"><span id="local-6989586621679098832"><span id="local-6989586621679098836"><span id="local-6989586621679098840"><span id="local-6989586621679098844"><span class="annot"><span class="annottext">AsSet a -&gt; AsSet a -&gt; Bool
+AsSet a -&gt; AsSet a -&gt; Ordering
+AsSet a -&gt; AsSet a -&gt; AsSet a
+forall a.
+Eq a
+-&gt; (a -&gt; a -&gt; Ordering)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; Ord a
+forall {a}. Ord a =&gt; Eq (AsSet a)
+forall a. Ord a =&gt; AsSet a -&gt; AsSet a -&gt; Bool
+forall a. Ord a =&gt; AsSet a -&gt; AsSet a -&gt; Ordering
+forall a. Ord a =&gt; AsSet a -&gt; AsSet a -&gt; AsSet a
+min :: AsSet a -&gt; AsSet a -&gt; AsSet a
+$cmin :: forall a. Ord a =&gt; AsSet a -&gt; AsSet a -&gt; AsSet a
+max :: AsSet a -&gt; AsSet a -&gt; AsSet a
+$cmax :: forall a. Ord a =&gt; AsSet a -&gt; AsSet a -&gt; AsSet a
+&gt;= :: AsSet a -&gt; AsSet a -&gt; Bool
+$c&gt;= :: forall a. Ord a =&gt; AsSet a -&gt; AsSet a -&gt; Bool
+&gt; :: AsSet a -&gt; AsSet a -&gt; Bool
+$c&gt; :: forall a. Ord a =&gt; AsSet a -&gt; AsSet a -&gt; Bool
+&lt;= :: AsSet a -&gt; AsSet a -&gt; Bool
+$c&lt;= :: forall a. Ord a =&gt; AsSet a -&gt; AsSet a -&gt; Bool
+&lt; :: AsSet a -&gt; AsSet a -&gt; Bool
+$c&lt; :: forall a. Ord a =&gt; AsSet a -&gt; AsSet a -&gt; Bool
+compare :: AsSet a -&gt; AsSet a -&gt; Ordering
+$ccompare :: forall a. Ord a =&gt; AsSet a -&gt; AsSet a -&gt; Ordering
+</span><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></a></span></span></span></span></span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-141"></span><span>
+</span><span id="line-142"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679099154"><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">IsSet</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099154"><span class="hs-identifier hs-type">set</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">Element</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099154"><span class="hs-identifier hs-type">set</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Flat.Instances.Mono.html#AsSet"><span class="hs-identifier hs-type">AsSet</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099154"><span class="hs-identifier hs-type">set</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-143"></span><span>  </span><span id="local-6989586621679098804"><span class="annot"><span class="annottext">size :: AsSet set -&gt; Int -&gt; Int
+</span><a href="#local-6989586621679098804"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span>   </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall set. (IsSet set, Flat (Element set)) =&gt; Size set
+</span><a href="Flat.Instances.Mono.html#sizeSet"><span class="hs-identifier hs-var">sizeSet</span></a></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. AsSet a -&gt; a
+</span><a href="Flat.Instances.Mono.html#unSet"><span class="hs-identifier hs-var">unSet</span></a></span><span>
+</span><span id="line-144"></span><span>  </span><span id="local-6989586621679098801"><span class="annot"><span class="annottext">encode :: AsSet set -&gt; Encoding
+</span><a href="#local-6989586621679098801"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall set. (IsSet set, Flat (Element set)) =&gt; set -&gt; Encoding
+</span><a href="Flat.Instances.Mono.html#encodeSet"><span class="hs-identifier hs-var">encodeSet</span></a></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. AsSet a -&gt; a
+</span><a href="Flat.Instances.Mono.html#unSet"><span class="hs-identifier hs-var">unSet</span></a></span><span>
+</span><span id="line-145"></span><span>  </span><span id="local-6989586621679098797"><span class="annot"><span class="annottext">decode :: Get (AsSet set)
+</span><a href="#local-6989586621679098797"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. a -&gt; AsSet a
+</span><a href="Flat.Instances.Mono.html#AsSet"><span class="hs-identifier hs-var">AsSet</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall set. (IsSet set, Flat (Element set)) =&gt; Get set
+</span><a href="Flat.Instances.Mono.html#decodeSet"><span class="hs-identifier hs-var">decodeSet</span></a></span><span>
+</span><span id="line-146"></span><span>
+</span><span id="line-147"></span><span id="local-6989586621679099151"><span class="annot"><a href="Flat.Instances.Mono.html#sizeSet"><span class="hs-identifier hs-type">sizeSet</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">IsSet</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099151"><span class="hs-identifier hs-type">set</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">Element</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099151"><span class="hs-identifier hs-type">set</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Encoder.Types.html#Size"><span class="hs-identifier hs-type">Size</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099151"><span class="hs-identifier hs-type">set</span></a></span></span><span>
+</span><span id="line-148"></span><span id="sizeSet"><span class="annot"><span class="annottext">sizeSet :: forall set. (IsSet set, Flat (Element set)) =&gt; Size set
+</span><a href="Flat.Instances.Mono.html#sizeSet"><span class="hs-identifier hs-var hs-var">sizeSet</span></a></span></span><span> </span><span id="local-6989586621679098781"><span class="annot"><span class="annottext">set
+</span><a href="#local-6989586621679098781"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679098780"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098780"><span class="hs-identifier hs-var">acc</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall mono a.
+MonoFoldable mono =&gt;
+(a -&gt; Element mono -&gt; a) -&gt; a -&gt; mono -&gt; a
+</span><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-var">ofoldl'</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679098779"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098779"><span class="hs-identifier hs-var">acc</span></a></span></span><span> </span><span id="local-6989586621679098778"><span class="annot"><span class="annottext">Element set
+</span><a href="#local-6989586621679098778"><span class="hs-identifier hs-var">e</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Int -&gt; Int
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="annot"><span class="annottext">Element set
+</span><a href="#local-6989586621679098778"><span class="hs-identifier hs-var">e</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098779"><span class="hs-identifier hs-var">acc</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Num a =&gt; a -&gt; a -&gt; a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">+</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">1</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098780"><span class="hs-identifier hs-var">acc</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Num a =&gt; a -&gt; a -&gt; a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">+</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">1</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">$</span></a></span><span> </span><span class="annot"><span class="annottext">set
+</span><a href="#local-6989586621679098781"><span class="hs-identifier hs-var">l</span></a></span><span>
+</span><span id="line-149"></span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#sizeSet"><span class="hs-pragma hs-type">sizeSet</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
+</span><span id="line-150"></span><span>
+</span><span id="line-151"></span><span id="local-6989586621679099149"><span class="annot"><a href="Flat.Instances.Mono.html#encodeSet"><span class="hs-identifier hs-type">encodeSet</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">IsSet</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099149"><span class="hs-identifier hs-type">set</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">Element</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099149"><span class="hs-identifier hs-type">set</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679099149"><span class="hs-identifier hs-type">set</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Flat.Encoder.Strict.html#Encoding"><span class="hs-identifier hs-type">Encoding</span></a></span></span><span>
+</span><span id="line-152"></span><span id="encodeSet"><span class="annot"><span class="annottext">encodeSet :: forall set. (IsSet set, Flat (Element set)) =&gt; set -&gt; Encoding
+</span><a href="Flat.Instances.Mono.html#encodeSet"><span class="hs-identifier hs-var hs-var">encodeSet</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall mono.
+(Flat (Element mono), MonoFoldable mono) =&gt;
+mono -&gt; Encoding
+</span><a href="Flat.Instances.Mono.html#encodeList"><span class="hs-identifier hs-var">encodeList</span></a></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">forall set. IsSet set =&gt; set -&gt; [Element set]
+</span><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-var">setToList</span></a></span><span>
+</span><span id="line-153"></span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#encodeSet"><span class="hs-pragma hs-type">encodeSet</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
+</span><span id="line-154"></span><span>
+</span><span id="line-155"></span><span id="local-6989586621679099148"><span class="annot"><a href="Flat.Instances.Mono.html#decodeSet"><span class="hs-identifier hs-type">decodeSet</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">IsSet</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099148"><span class="hs-identifier hs-type">set</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">Element</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099148"><span class="hs-identifier hs-type">set</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Decoder.Types.html#Get"><span class="hs-identifier hs-type">Get</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099148"><span class="hs-identifier hs-type">set</span></a></span></span><span>
+</span><span id="line-156"></span><span id="decodeSet"><span class="annot"><span class="annottext">decodeSet :: forall set. (IsSet set, Flat (Element set)) =&gt; Get set
+</span><a href="Flat.Instances.Mono.html#decodeSet"><span class="hs-identifier hs-var hs-var">decodeSet</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall set. IsSet set =&gt; [Element set] -&gt; set
+</span><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-var">setFromList</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall b. (IsSequence b, Flat (Element b)) =&gt; Get b
+</span><a href="Flat.Instances.Mono.html#decodeList"><span class="hs-identifier hs-var">decodeList</span></a></span><span>
+</span><span id="line-157"></span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#decodeSet"><span class="hs-pragma hs-type">decodeSet</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
+</span><span id="line-158"></span><span>
+</span><span id="line-159"></span><span class="hs-comment">{-|
+Maps are saved as lists of (key,value) tuples.
+
+&gt;&gt;&gt; tst (AsMap (Data.Map.fromList ([]::[(Word8,())])))
+(True,1,[0])
+
+&gt;&gt;&gt; tst (AsMap (Data.Map.fromList [(3::Word,9::Word)]))
+(True,18,[129,132,128])
+-}</span><span>
+</span><span id="line-168"></span><span class="hs-keyword">newtype</span><span> </span><span id="AsMap"><span class="annot"><a href="Flat.Instances.Mono.html#AsMap"><span class="hs-identifier hs-var">AsMap</span></a></span></span><span> </span><span id="local-6989586621679099137"><span class="annot"><a href="#local-6989586621679099137"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-169"></span><span>  </span><span id="AsMap"><span class="annot"><a href="Flat.Instances.Mono.html#AsMap"><span class="hs-identifier hs-var">AsMap</span></a></span></span><span>
+</span><span id="line-170"></span><span>    </span><span class="hs-special">{</span><span> </span><span id="unMap"><span class="annot"><span class="annottext">forall a. AsMap a -&gt; a
+</span><a href="Flat.Instances.Mono.html#unMap"><span class="hs-identifier hs-var hs-var">unMap</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679099137"><span class="hs-identifier hs-type">a</span></a></span><span>
+</span><span id="line-171"></span><span>    </span><span class="hs-special">}</span><span> </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679098747"><span id="local-6989586621679098749"><span id="local-6989586621679098753"><span class="annot"><span class="annottext">Int -&gt; AsMap a -&gt; ShowS
+forall a. Show a =&gt; Int -&gt; AsMap a -&gt; ShowS
+forall a. Show a =&gt; [AsMap a] -&gt; ShowS
+forall a. Show a =&gt; AsMap a -&gt; String
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [AsMap a] -&gt; ShowS
+$cshowList :: forall a. Show a =&gt; [AsMap a] -&gt; ShowS
+show :: AsMap a -&gt; String
+$cshow :: forall a. Show a =&gt; AsMap a -&gt; String
+showsPrec :: Int -&gt; AsMap a -&gt; ShowS
+$cshowsPrec :: forall a. Show a =&gt; Int -&gt; AsMap a -&gt; ShowS
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></a></span></span></span></span><span class="hs-special">,</span><span id="local-6989586621679098740"><span id="local-6989586621679098744"><span class="annot"><span class="annottext">AsMap a -&gt; AsMap a -&gt; Bool
+forall a. Eq a =&gt; AsMap a -&gt; AsMap a -&gt; Bool
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: AsMap a -&gt; AsMap a -&gt; Bool
+$c/= :: forall a. Eq a =&gt; AsMap a -&gt; AsMap a -&gt; Bool
+== :: AsMap a -&gt; AsMap a -&gt; Bool
+$c== :: forall a. Eq a =&gt; AsMap a -&gt; AsMap a -&gt; Bool
+</span><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></a></span></span></span><span class="hs-special">,</span><span id="local-6989586621679098707"><span id="local-6989586621679098711"><span id="local-6989586621679098715"><span id="local-6989586621679098719"><span id="local-6989586621679098723"><span id="local-6989586621679098727"><span id="local-6989586621679098731"><span class="annot"><span class="annottext">AsMap a -&gt; AsMap a -&gt; Bool
+AsMap a -&gt; AsMap a -&gt; Ordering
+AsMap a -&gt; AsMap a -&gt; AsMap a
+forall a.
+Eq a
+-&gt; (a -&gt; a -&gt; Ordering)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; Ord a
+forall {a}. Ord a =&gt; Eq (AsMap a)
+forall a. Ord a =&gt; AsMap a -&gt; AsMap a -&gt; Bool
+forall a. Ord a =&gt; AsMap a -&gt; AsMap a -&gt; Ordering
+forall a. Ord a =&gt; AsMap a -&gt; AsMap a -&gt; AsMap a
+min :: AsMap a -&gt; AsMap a -&gt; AsMap a
+$cmin :: forall a. Ord a =&gt; AsMap a -&gt; AsMap a -&gt; AsMap a
+max :: AsMap a -&gt; AsMap a -&gt; AsMap a
+$cmax :: forall a. Ord a =&gt; AsMap a -&gt; AsMap a -&gt; AsMap a
+&gt;= :: AsMap a -&gt; AsMap a -&gt; Bool
+$c&gt;= :: forall a. Ord a =&gt; AsMap a -&gt; AsMap a -&gt; Bool
+&gt; :: AsMap a -&gt; AsMap a -&gt; Bool
+$c&gt; :: forall a. Ord a =&gt; AsMap a -&gt; AsMap a -&gt; Bool
+&lt;= :: AsMap a -&gt; AsMap a -&gt; Bool
+$c&lt;= :: forall a. Ord a =&gt; AsMap a -&gt; AsMap a -&gt; Bool
+&lt; :: AsMap a -&gt; AsMap a -&gt; Bool
+$c&lt; :: forall a. Ord a =&gt; AsMap a -&gt; AsMap a -&gt; Bool
+compare :: AsMap a -&gt; AsMap a -&gt; Ordering
+$ccompare :: forall a. Ord a =&gt; AsMap a -&gt; AsMap a -&gt; Ordering
+</span><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></a></span></span></span></span></span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-172"></span><span>
+</span><span id="line-173"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679099130"><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">IsMap</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099130"><span class="hs-identifier hs-type">map</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">ContainerKey</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099130"><span class="hs-identifier hs-type">map</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">MapValue</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099130"><span class="hs-identifier hs-type">map</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Flat.Instances.Mono.html#AsMap"><span class="hs-identifier hs-type">AsMap</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099130"><span class="hs-identifier hs-type">map</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-174"></span><span>  </span><span id="local-6989586621679098693"><span class="annot"><span class="annottext">size :: AsMap map -&gt; Int -&gt; Int
+</span><a href="#local-6989586621679098693"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span>   </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall r.
+(Flat (ContainerKey r), Flat (MapValue r), IsMap r) =&gt;
+Size r
+</span><a href="Flat.Instances.Mono.html#sizeMap"><span class="hs-identifier hs-var">sizeMap</span></a></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. AsMap a -&gt; a
+</span><a href="Flat.Instances.Mono.html#unMap"><span class="hs-identifier hs-var">unMap</span></a></span><span>
+</span><span id="line-175"></span><span>  </span><span id="local-6989586621679098689"><span class="annot"><span class="annottext">encode :: AsMap map -&gt; Encoding
+</span><a href="#local-6989586621679098689"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall map.
+(Flat (ContainerKey map), Flat (MapValue map), IsMap map) =&gt;
+map -&gt; Encoding
+</span><a href="Flat.Instances.Mono.html#encodeMap"><span class="hs-identifier hs-var">encodeMap</span></a></span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. AsMap a -&gt; a
+</span><a href="Flat.Instances.Mono.html#unMap"><span class="hs-identifier hs-var">unMap</span></a></span><span>
+</span><span id="line-176"></span><span>  </span><span id="local-6989586621679098684"><span class="annot"><span class="annottext">decode :: Get (AsMap map)
+</span><a href="#local-6989586621679098684"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. a -&gt; AsMap a
+</span><a href="Flat.Instances.Mono.html#AsMap"><span class="hs-identifier hs-var">AsMap</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall map.
+(Flat (ContainerKey map), Flat (MapValue map), IsMap map) =&gt;
+Get map
+</span><a href="Flat.Instances.Mono.html#decodeMap"><span class="hs-identifier hs-var">decodeMap</span></a></span><span>
+</span><span id="line-177"></span><span>
+</span><span id="line-178"></span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#sizeMap"><span class="hs-pragma hs-type">sizeMap</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
+</span><span id="line-179"></span><span id="local-6989586621679099129"><span class="annot"><a href="Flat.Instances.Mono.html#sizeMap"><span class="hs-identifier hs-type">sizeMap</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">ContainerKey</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099129"><span class="hs-identifier hs-type">r</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">MapValue</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099129"><span class="hs-identifier hs-type">r</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">IsMap</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099129"><span class="hs-identifier hs-type">r</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Encoder.Types.html#Size"><span class="hs-identifier hs-type">Size</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099129"><span class="hs-identifier hs-type">r</span></a></span></span><span>
+</span><span id="line-180"></span><span id="sizeMap"><span class="annot"><span class="annottext">sizeMap :: forall r.
+(Flat (ContainerKey r), Flat (MapValue r), IsMap r) =&gt;
+Size r
+</span><a href="Flat.Instances.Mono.html#sizeMap"><span class="hs-identifier hs-var hs-var">sizeMap</span></a></span></span><span> </span><span id="local-6989586621679098671"><span class="annot"><span class="annottext">r
+</span><a href="#local-6989586621679098671"><span class="hs-identifier hs-var">m</span></a></span></span><span> </span><span id="local-6989586621679098670"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098670"><span class="hs-identifier hs-var">acc</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-181"></span><span>  </span><span class="annot"><span class="annottext">forall (t :: * -&gt; *) b a.
+Foldable t =&gt;
+(b -&gt; a -&gt; b) -&gt; b -&gt; t a -&gt; b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">F.foldl'</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679098668"><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098668"><span class="hs-identifier hs-var">acc'</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679098667"><span class="annot"><span class="annottext">ContainerKey r
+</span><a href="#local-6989586621679098667"><span class="hs-identifier hs-var">k</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679098666"><span class="annot"><span class="annottext">MapValue r
+</span><a href="#local-6989586621679098666"><span class="hs-identifier hs-var">v</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Int -&gt; Int
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="annot"><span class="annottext">ContainerKey r
+</span><a href="#local-6989586621679098667"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Int -&gt; Int
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="annot"><span class="annottext">MapValue r
+</span><a href="#local-6989586621679098666"><span class="hs-identifier hs-var">v</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098668"><span class="hs-identifier hs-var">acc'</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Num a =&gt; a -&gt; a -&gt; a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">+</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">1</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int
+</span><a href="#local-6989586621679098670"><span class="hs-identifier hs-var">acc</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Num a =&gt; a -&gt; a -&gt; a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">+</span></a></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">1</span></span><span class="hs-special">)</span><span>
+</span><span id="line-182"></span><span>    </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">forall map. IsMap map =&gt; map -&gt; [(ContainerKey map, MapValue map)]
+</span><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-var">mapToList</span></a></span><span>
+</span><span id="line-183"></span><span>    </span><span class="annot"><span class="annottext">forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">$</span></a></span><span> </span><span class="annot"><span class="annottext">r
+</span><a href="#local-6989586621679098671"><span class="hs-identifier hs-var">m</span></a></span><span>
+</span><span id="line-184"></span><span class="hs-comment">-- sizeMap l sz = ofoldl' (\s (k, v) -&gt; size k (size v (s + 1))) (sz + 1) l</span><span>
+</span><span id="line-185"></span><span>
+</span><span id="line-186"></span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#encodeMap"><span class="hs-pragma hs-type">encodeMap</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
+</span><span id="line-187"></span><span class="hs-comment">-- |Encode an instance of IsMap, as a list of (Key,Value) tuples</span><span>
+</span><span id="line-188"></span><span id="local-6989586621679099128"><span class="annot"><a href="Flat.Instances.Mono.html#encodeMap"><span class="hs-identifier hs-type">encodeMap</span></a></span><span>
+</span><span id="line-189"></span><span>  </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">ContainerKey</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099128"><span class="hs-identifier hs-type">map</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">MapValue</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099128"><span class="hs-identifier hs-type">map</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">IsMap</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099128"><span class="hs-identifier hs-type">map</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-190"></span><span>  </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679099128"><span class="hs-identifier hs-type">map</span></a></span><span>
+</span><span id="line-191"></span><span>  </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Flat.Encoder.Strict.html#Encoding"><span class="hs-identifier hs-type">Encoding</span></a></span></span><span>
+</span><span id="line-192"></span><span id="encodeMap"><span class="annot"><span class="annottext">encodeMap :: forall map.
+(Flat (ContainerKey map), Flat (MapValue map), IsMap map) =&gt;
+map -&gt; Encoding
+</span><a href="Flat.Instances.Mono.html#encodeMap"><span class="hs-identifier hs-var hs-var">encodeMap</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall t. (t -&gt; Encoding) -&gt; [t] -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#encodeListWith"><span class="hs-identifier hs-var">encodeListWith</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span class="hs-special">(</span><span id="local-6989586621679098656"><span class="annot"><span class="annottext">ContainerKey map
+</span><a href="#local-6989586621679098656"><span class="hs-identifier hs-var">k</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679098655"><span class="annot"><span class="annottext">MapValue map
+</span><a href="#local-6989586621679098655"><span class="hs-identifier hs-var">v</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var">encode</span></a></span><span> </span><span class="annot"><span class="annottext">ContainerKey map
+</span><a href="#local-6989586621679098656"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var">encode</span></a></span><span> </span><span class="annot"><span class="annottext">MapValue map
+</span><a href="#local-6989586621679098655"><span class="hs-identifier hs-var">v</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">forall map. IsMap map =&gt; map -&gt; [(ContainerKey map, MapValue map)]
+</span><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-var">mapToList</span></a></span><span>
+</span><span id="line-193"></span><span>
+</span><span id="line-194"></span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Flat.Instances.Mono.html#decodeMap"><span class="hs-pragma hs-type">decodeMap</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
+</span><span id="line-195"></span><span class="hs-comment">-- |Decode an instance of IsMap, as a list of (Key,Value) tuples</span><span>
+</span><span id="line-196"></span><span id="local-6989586621679099127"><span class="annot"><a href="Flat.Instances.Mono.html#decodeMap"><span class="hs-identifier hs-type">decodeMap</span></a></span><span>
+</span><span id="line-197"></span><span>  </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">ContainerKey</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099127"><span class="hs-identifier hs-type">map</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">MapValue</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099127"><span class="hs-identifier hs-type">map</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-type">IsMap</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099127"><span class="hs-identifier hs-type">map</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Decoder.Types.html#Get"><span class="hs-identifier hs-type">Get</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679099127"><span class="hs-identifier hs-type">map</span></a></span></span><span>
+</span><span id="line-198"></span><span id="decodeMap"><span class="annot"><span class="annottext">decodeMap :: forall map.
+(Flat (ContainerKey map), Flat (MapValue map), IsMap map) =&gt;
+Get map
+</span><a href="Flat.Instances.Mono.html#decodeMap"><span class="hs-identifier hs-var hs-var">decodeMap</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall map. IsMap map =&gt; [(ContainerKey map, MapValue map)] -&gt; map
+</span><a href="../../../../mono-traversable/html/src"><span class="hs-identifier hs-var">mapFromList</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Get a -&gt; Get [a]
+</span><a href="Flat.Decoder.Strict.html#decodeListWith"><span class="hs-identifier hs-var">decodeListWith</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="hs-special">,</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Applicative f =&gt; f (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;*&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-199"></span><span>
+</span><span id="line-200"></span></pre></body></html>

@@ -1,0 +1,901 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE CPP #-}</span><span>
+</span><span id="line-2"></span><span class="hs-pragma">{-# LANGUAGE DeriveGeneric #-}</span><span>
+</span><span id="line-3"></span><span class="hs-pragma">{-# LANGUAGE FlexibleInstances ,StandaloneDeriving #-}</span><span>
+</span><span id="line-4"></span><span class="hs-comment">-- | Flat instances for the base library</span><span>
+</span><span id="line-5"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Flat.Instances.Base</span><span class="hs-special">(</span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-6"></span><span>
+</span><span id="line-7"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier">Data.Bool</span></a></span><span>
+</span><span id="line-8"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier">Data.Char</span></a></span><span>
+</span><span id="line-9"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier">Data.Fixed</span></a></span><span>
+</span><span id="line-10"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Flat.Instances.Util.html"><span class="hs-identifier">Flat.Instances.Util</span></a></span><span>
+</span><span id="line-11"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier">Data.Complex</span></a></span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier">Complex</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-12"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier">Data.Ratio</span></a></span><span>
+</span><span id="line-13"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier">Prelude</span></a></span><span> </span><span class="hs-keyword">hiding</span><span> </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier">mempty</span></a></span><span> </span><span class="hs-special">)</span><span>
+</span><span id="line-14"></span><span class="hs-keyword">import</span><span>           </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier">Control.Monad</span></a></span><span>                  </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier">liftM2</span></a></span><span> </span><span class="hs-special">)</span><span>
+</span><span id="line-15"></span><span class="hs-comment">-- #if MIN_VERSION_base(4,9,0)</span><span>
+</span><span id="line-16"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier">Data.List.NonEmpty</span></a></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">B</span></span><span>
+</span><span id="line-17"></span><span class="hs-comment">-- #endif</span><span class="hs-cpp">
+
+#if ! MIN_VERSION_base(4,8,0)
+</span><span class="hs-keyword">import</span><span> </span><span class="hs-identifier">Control.Applicative</span><span>
+</span><span id="line-21"></span><span class="hs-keyword">import</span><span> </span><span class="hs-identifier">Data.Monoid</span><span> </span><span class="hs-special">(</span><span class="hs-identifier">mempty</span><span class="hs-special">)</span><span class="hs-cpp">
+#endif
+</span><span class="hs-cpp">
+#if MIN_VERSION_base(4,9,0)
+</span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier">Data.Semigroup</span></a></span><span>     </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">Semigroup</span></span><span class="hs-cpp">
+#endif
+</span><span>
+</span><span id="line-28"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier">Data.Monoid</span></a></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">Monoid</span></span><span class="hs-cpp">
+
+#if !MIN_VERSION_base(4,11,0)
+</span><span class="hs-keyword">import</span><span> </span><span class="hs-identifier">Data.Monoid</span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="hs-operator">&lt;&gt;</span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-cpp">
+#endif
+</span><span class="hs-cpp">
+#if MIN_VERSION_base(4,8,0)
+</span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier">Data.Functor.Identity</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier">Identity</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-cpp">
+#endif
+</span><span class="hs-cpp">
+#if !MIN_VERSION_base(4,9,0)
+</span><span class="hs-keyword">deriving</span><span> </span><span class="hs-keyword">instance</span><span> </span><span class="hs-identifier">Generic</span><span> </span><span class="hs-special">(</span><span class="hs-identifier">Complex</span><span> </span><span class="hs-identifier">a</span><span class="hs-special">)</span><span class="hs-cpp">
+#endif
+</span><span>
+</span><span id="line-42"></span><span class="hs-comment">-- $setup</span><span>
+</span><span id="line-43"></span><span class="hs-comment">-- &gt;&gt;&gt; :set -XNegativeLiterals</span><span>
+</span><span id="line-44"></span><span class="hs-comment">-- &gt;&gt;&gt; import Flat.Instances.Test</span><span>
+</span><span id="line-45"></span><span class="hs-comment">-- &gt;&gt;&gt; import Data.Fixed</span><span>
+</span><span id="line-46"></span><span class="hs-comment">-- &gt;&gt;&gt; import Data.Int</span><span>
+</span><span id="line-47"></span><span class="hs-comment">-- &gt;&gt;&gt; import Data.Complex(Complex(..))</span><span>
+</span><span id="line-48"></span><span class="hs-comment">-- &gt;&gt;&gt; import Numeric.Natural</span><span>
+</span><span id="line-49"></span><span class="hs-comment">-- &gt;&gt;&gt; import Data.Word</span><span>
+</span><span id="line-50"></span><span class="hs-comment">-- &gt;&gt;&gt; import Data.Ratio</span><span>
+</span><span id="line-51"></span><span class="hs-comment">-- &gt;&gt;&gt; import Flat.Run</span><span>
+</span><span id="line-52"></span><span class="hs-comment">-- &gt;&gt;&gt; import Data.Monoid</span><span>
+</span><span id="line-53"></span><span class="hs-comment">-- &gt;&gt;&gt; import qualified Data.List.NonEmpty as B</span><span>
+</span><span id="line-54"></span><span class="hs-comment">-- &gt;&gt;&gt; let test = tstBits</span><span class="hs-cpp">
+
+#if MIN_VERSION_base(4,8,0)
+</span><span class="hs-comment">-- | @since 0.4.4</span><span>
+</span><span id="line-58"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679100465"><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100465"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Identity</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100465"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-59"></span><span>    </span><span id="local-6989586621679099814"><span class="annot"><span class="annottext">encode :: Identity a -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Identity</span></a></span><span> </span><span id="local-6989586621679099811"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099811"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var">encode</span></a></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099811"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-60"></span><span>    </span><span id="local-6989586621679099809"><span class="annot"><span class="annottext">size :: Identity a -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Identity</span></a></span><span> </span><span id="local-6989586621679099807"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099807"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099807"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-61"></span><span>    </span><span id="local-6989586621679099803"><span class="annot"><span class="annottext">decode :: Get (Identity a)
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. a -&gt; Identity a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">Identity</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span class="hs-cpp">
+#endif
+</span><span>
+</span><span id="line-64"></span><span class="hs-comment">-- | @since 0.4.4</span><span>
+</span><span id="line-65"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679100458"><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100458"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.Dual</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100458"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-66"></span><span>    </span><span id="local-6989586621679099794"><span class="annot"><span class="annottext">encode :: Dual a -&gt; Encoding
+</span><a href="#local-6989586621679099794"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.Dual</span></a></span><span> </span><span id="local-6989586621679099792"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099792"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var">encode</span></a></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099792"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-67"></span><span>    </span><span id="local-6989586621679099790"><span class="annot"><span class="annottext">size :: Dual a -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099790"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.Dual</span></a></span><span> </span><span id="local-6989586621679099789"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099789"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099789"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-68"></span><span>    </span><span id="local-6989586621679099786"><span class="annot"><span class="annottext">decode :: Get (Dual a)
+</span><a href="#local-6989586621679099786"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. a -&gt; Dual a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">Monoid.Dual</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span>
+</span><span id="line-69"></span><span>
+</span><span id="line-70"></span><span class="hs-comment">-- | @since 0.4.4</span><span>
+</span><span id="line-71"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.All</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-72"></span><span>    </span><span id="local-6989586621679099779"><span class="annot"><span class="annottext">encode :: All -&gt; Encoding
+</span><a href="#local-6989586621679099779"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.All</span></a></span><span> </span><span id="local-6989586621679099777"><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679099777"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var">encode</span></a></span><span> </span><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679099777"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-73"></span><span>    </span><span id="local-6989586621679099775"><span class="annot"><span class="annottext">size :: All -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099775"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.All</span></a></span><span> </span><span id="local-6989586621679099774"><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679099774"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679099774"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-74"></span><span>    </span><span id="local-6989586621679099771"><span class="annot"><span class="annottext">decode :: Get All
+</span><a href="#local-6989586621679099771"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; All
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">Monoid.All</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span>
+</span><span id="line-75"></span><span>
+</span><span id="line-76"></span><span class="hs-comment">-- | @since 0.4.4</span><span>
+</span><span id="line-77"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.Any</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-78"></span><span>    </span><span id="local-6989586621679099765"><span class="annot"><span class="annottext">encode :: Any -&gt; Encoding
+</span><a href="#local-6989586621679099765"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.Any</span></a></span><span> </span><span id="local-6989586621679099763"><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679099763"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var">encode</span></a></span><span> </span><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679099763"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-79"></span><span>    </span><span id="local-6989586621679099761"><span class="annot"><span class="annottext">size :: Any -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099761"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.Any</span></a></span><span> </span><span id="local-6989586621679099760"><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679099760"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679099760"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-80"></span><span>    </span><span id="local-6989586621679099757"><span class="annot"><span class="annottext">decode :: Get Any
+</span><a href="#local-6989586621679099757"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; Any
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">Monoid.Any</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span>
+</span><span id="line-81"></span><span>
+</span><span id="line-82"></span><span class="hs-comment">-- | @since 0.4.4</span><span>
+</span><span id="line-83"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679100452"><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100452"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.Sum</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100452"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-84"></span><span>    </span><span id="local-6989586621679099750"><span class="annot"><span class="annottext">encode :: Sum a -&gt; Encoding
+</span><a href="#local-6989586621679099750"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.Sum</span></a></span><span> </span><span id="local-6989586621679099748"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099748"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var">encode</span></a></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099748"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-85"></span><span>    </span><span id="local-6989586621679099746"><span class="annot"><span class="annottext">size :: Sum a -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099746"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.Sum</span></a></span><span> </span><span id="local-6989586621679099745"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099745"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099745"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-86"></span><span>    </span><span id="local-6989586621679099742"><span class="annot"><span class="annottext">decode :: Get (Sum a)
+</span><a href="#local-6989586621679099742"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. a -&gt; Sum a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">Monoid.Sum</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span>
+</span><span id="line-87"></span><span>
+</span><span id="line-88"></span><span class="hs-comment">-- | @since 0.4.4</span><span>
+</span><span id="line-89"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679100448"><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100448"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.Product</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100448"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-90"></span><span>    </span><span id="local-6989586621679099735"><span class="annot"><span class="annottext">encode :: Product a -&gt; Encoding
+</span><a href="#local-6989586621679099735"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.Product</span></a></span><span> </span><span id="local-6989586621679099733"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099733"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var">encode</span></a></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099733"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-91"></span><span>    </span><span id="local-6989586621679099731"><span class="annot"><span class="annottext">size :: Product a -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099731"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.Product</span></a></span><span> </span><span id="local-6989586621679099730"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099730"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099730"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-92"></span><span>    </span><span id="local-6989586621679099727"><span class="annot"><span class="annottext">decode :: Get (Product a)
+</span><a href="#local-6989586621679099727"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. a -&gt; Product a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">Monoid.Product</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span class="hs-cpp">
+
+#if MIN_VERSION_base(4,9,0)
+</span><span class="hs-comment">{- |
+&gt;&gt;&gt; let w = Just (11::Word8); a = Alt w &lt;&gt; Alt (Just 24) in tst a == tst w 
+True
+
+&gt;&gt;&gt; let w = Just (11::Word8); a = Alt Nothing &lt;&gt; Alt w in tst a == tst w 
+True
+
+@since 0.4.4
+-}</span><span>
+</span><span id="line-104"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679100442"><span id="local-6989586621679100443"><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679100443"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100442"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.Alt</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100443"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100442"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-105"></span><span>    </span><span id="local-6989586621679099720"><span class="annot"><span class="annottext">encode :: Alt f a -&gt; Encoding
+</span><a href="#local-6989586621679099720"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.Alt</span></a></span><span> </span><span id="local-6989586621679099718"><span class="annot"><span class="annottext">f a
+</span><a href="#local-6989586621679099718"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var">encode</span></a></span><span> </span><span class="annot"><span class="annottext">f a
+</span><a href="#local-6989586621679099718"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-106"></span><span>    </span><span id="local-6989586621679099716"><span class="annot"><span class="annottext">size :: Alt f a -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099716"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Monoid.Alt</span></a></span><span> </span><span id="local-6989586621679099715"><span class="annot"><span class="annottext">f a
+</span><a href="#local-6989586621679099715"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="annot"><span class="annottext">f a
+</span><a href="#local-6989586621679099715"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-107"></span><span>    </span><span id="local-6989586621679099712"><span class="annot"><span class="annottext">decode :: Get (Alt f a)
+</span><a href="#local-6989586621679099712"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {k} (f :: k -&gt; *) (a :: k). f a -&gt; Alt f a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">Monoid.Alt</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span>
+</span><span id="line-108"></span><span>
+</span><span id="line-109"></span><span class="hs-comment">-- | @since 0.4.4</span><span>
+</span><span id="line-110"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679100436"><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100436"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Semigroup.Min</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100436"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-111"></span><span>    </span><span id="local-6989586621679099705"><span class="annot"><span class="annottext">encode :: Min a -&gt; Encoding
+</span><a href="#local-6989586621679099705"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Semigroup.Min</span></a></span><span> </span><span id="local-6989586621679099703"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099703"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var">encode</span></a></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099703"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-112"></span><span>    </span><span id="local-6989586621679099701"><span class="annot"><span class="annottext">size :: Min a -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099701"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Semigroup.Min</span></a></span><span> </span><span id="local-6989586621679099700"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099700"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099700"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-113"></span><span>    </span><span id="local-6989586621679099697"><span class="annot"><span class="annottext">decode :: Get (Min a)
+</span><a href="#local-6989586621679099697"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. a -&gt; Min a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">Semigroup.Min</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span>
+</span><span id="line-114"></span><span>
+</span><span id="line-115"></span><span class="hs-comment">-- | @since 0.4.4</span><span>
+</span><span id="line-116"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679100432"><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100432"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Semigroup.Max</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100432"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-117"></span><span>    </span><span id="local-6989586621679099690"><span class="annot"><span class="annottext">encode :: Max a -&gt; Encoding
+</span><a href="#local-6989586621679099690"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Semigroup.Max</span></a></span><span> </span><span id="local-6989586621679099688"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099688"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var">encode</span></a></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099688"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-118"></span><span>    </span><span id="local-6989586621679099686"><span class="annot"><span class="annottext">size :: Max a -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099686"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Semigroup.Max</span></a></span><span> </span><span id="local-6989586621679099685"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099685"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099685"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-119"></span><span>    </span><span id="local-6989586621679099682"><span class="annot"><span class="annottext">decode :: Get (Max a)
+</span><a href="#local-6989586621679099682"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. a -&gt; Max a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">Semigroup.Max</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span>
+</span><span id="line-120"></span><span>
+</span><span id="line-121"></span><span class="hs-comment">-- | @since 0.4.4</span><span>
+</span><span id="line-122"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679100428"><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100428"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Semigroup.First</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100428"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-123"></span><span>    </span><span id="local-6989586621679099675"><span class="annot"><span class="annottext">encode :: First a -&gt; Encoding
+</span><a href="#local-6989586621679099675"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Semigroup.First</span></a></span><span> </span><span id="local-6989586621679099673"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099673"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var">encode</span></a></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099673"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-124"></span><span>    </span><span id="local-6989586621679099671"><span class="annot"><span class="annottext">size :: First a -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099671"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Semigroup.First</span></a></span><span> </span><span id="local-6989586621679099670"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099670"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099670"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-125"></span><span>    </span><span id="local-6989586621679099667"><span class="annot"><span class="annottext">decode :: Get (First a)
+</span><a href="#local-6989586621679099667"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. a -&gt; First a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">Semigroup.First</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span>
+</span><span id="line-126"></span><span>
+</span><span id="line-127"></span><span class="hs-comment">-- | @since 0.4.4</span><span>
+</span><span id="line-128"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679100424"><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100424"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Semigroup.Last</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100424"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-129"></span><span>    </span><span id="local-6989586621679099660"><span class="annot"><span class="annottext">encode :: Last a -&gt; Encoding
+</span><a href="#local-6989586621679099660"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Semigroup.Last</span></a></span><span> </span><span id="local-6989586621679099658"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099658"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var">encode</span></a></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099658"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-130"></span><span>    </span><span id="local-6989586621679099656"><span class="annot"><span class="annottext">size :: Last a -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099656"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Semigroup.Last</span></a></span><span> </span><span id="local-6989586621679099655"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099655"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679099655"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-131"></span><span>    </span><span id="local-6989586621679099652"><span class="annot"><span class="annottext">decode :: Get (Last a)
+</span><a href="#local-6989586621679099652"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. a -&gt; Last a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">Semigroup.Last</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span class="hs-cpp">
+#endif
+</span><span>
+</span><span id="line-134"></span><span class="hs-comment">{- |
+`()`, as all data types with a single constructor, has a zero-length encoding.
+
+&gt;&gt;&gt; test ()
+(True,0,&quot;&quot;)
+-}</span><span>
+</span><span id="line-140"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-141"></span><span>    </span><span id="local-6989586621679099645"><span class="annot"><span class="annottext">encode :: () -&gt; Encoding
+</span><a href="#local-6989586621679099645"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="annot"><span class="annottext">()
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Monoid a =&gt; a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">mempty</span></a></span><span>
+</span><span id="line-142"></span><span>
+</span><span id="line-143"></span><span>    </span><span id="local-6989586621679099644"><span class="annot"><span class="annottext">size :: () -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099644"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="annot"><span class="annottext">()
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. a -&gt; a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">id</span></a></span><span>
+</span><span id="line-144"></span><span>
+</span><span id="line-145"></span><span>    </span><span id="local-6989586621679099640"><span class="annot"><span class="annottext">decode :: Get ()
+</span><a href="#local-6989586621679099640"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">pure</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-146"></span><span>
+</span><span id="line-147"></span><span class="hs-comment">{-|
+One bit is plenty for a Bool.
+
+&gt;&gt;&gt; test False
+(True,1,&quot;0&quot;)
+
+&gt;&gt;&gt; test True
+(True,1,&quot;1&quot;)
+-}</span><span>
+</span><span id="line-156"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-type">Bool</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-157"></span><span>    </span><span id="local-6989586621679099636"><span class="annot"><span class="annottext">encode :: Bool -&gt; Encoding
+</span><a href="#local-6989586621679099636"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#eBool"><span class="hs-identifier hs-var">eBool</span></a></span><span>
+</span><span id="line-158"></span><span>
+</span><span id="line-159"></span><span>    </span><span id="local-6989586621679099634"><span class="annot"><span class="annottext">size :: Bool -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099634"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Encoder.Strict.html#sBool"><span class="hs-identifier hs-var">sBool</span></a></span><span>
+</span><span id="line-160"></span><span>
+</span><span id="line-161"></span><span>    </span><span id="local-6989586621679099632"><span class="annot"><span class="annottext">decode :: Get Bool
+</span><a href="#local-6989586621679099632"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Get Bool
+</span><a href="Flat.Decoder.Prim.html#dBool"><span class="hs-identifier hs-var">dBool</span></a></span><span>
+</span><span id="line-162"></span><span>
+</span><span id="line-163"></span><span class="hs-comment">{-|
+Char's are mapped to Word32 and then encoded.
+
+For ascii characters, the encoding is standard ascii. 
+
+&gt;&gt;&gt; test 'a'
+(True,8,&quot;01100001&quot;)
+
+For unicode characters, the encoding is non standard.
+
+&gt;&gt;&gt; test '&#200;'
+(True,16,&quot;11001000 00000001&quot;)
+
+&gt;&gt;&gt; test '&#19981;'
+(True,24,&quot;10001101 10011100 00000001&quot;)
+
+#ifndef ETA
+&gt;&gt;&gt; test &quot;\x1F600&quot;
+(True,26,&quot;11000000 01110110 00000011 10&quot;)
+#endif
+-}</span><span>
+</span><span id="line-184"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-type">Char</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-185"></span><span>    </span><span id="local-6989586621679099626"><span class="annot"><span class="annottext">size :: Char -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099626"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Char -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Encoder.Strict.html#sChar"><span class="hs-identifier hs-var">sChar</span></a></span><span>
+</span><span id="line-186"></span><span>
+</span><span id="line-187"></span><span>    </span><span id="local-6989586621679099624"><span class="annot"><span class="annottext">encode :: Char -&gt; Encoding
+</span><a href="#local-6989586621679099624"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Char -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#eChar"><span class="hs-identifier hs-var">eChar</span></a></span><span>
+</span><span id="line-188"></span><span>
+</span><span id="line-189"></span><span>    </span><span id="local-6989586621679099622"><span class="annot"><span class="annottext">decode :: Get Char
+</span><a href="#local-6989586621679099622"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Get Char
+</span><a href="Flat.Decoder.Strict.html#dChar"><span class="hs-identifier hs-var">dChar</span></a></span><span>
+</span><span id="line-190"></span><span>
+</span><span id="line-191"></span><span class="hs-comment">{- |
+&gt;&gt;&gt; test (Nothing::Maybe Bool)
+(True,1,&quot;0&quot;)
+
+&gt;&gt;&gt; test (Just False::Maybe Bool)
+(True,2,&quot;10&quot;)
+-}</span><span>
+</span><span id="line-198"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679099615"><span id="local-6989586621679099617"><span id="local-6989586621679099619"><span id="local-6989586621679100418"><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100418"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Maybe</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100418"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span></span></span></span><span>
+</span><span id="line-199"></span><span>
+</span><span id="line-200"></span><span class="hs-comment">{-|
+&gt;&gt;&gt; test (Left False::Either Bool ())
+(True,2,&quot;00&quot;)
+
+&gt;&gt;&gt; test (Right ()::Either Bool ())
+(True,1,&quot;1&quot;)
+-}</span><span>
+</span><span id="line-207"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679099609"><span id="local-6989586621679099611"><span id="local-6989586621679099613"><span id="local-6989586621679100416"><span id="local-6989586621679100417"><span class="hs-special">(</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100417"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100416"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Either</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100417"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100416"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span></span></span></span></span></span><span>
+</span><span id="line-208"></span><span>
+</span><span id="line-209"></span><span class="hs-comment">{-|
+&gt;&gt;&gt; test (MkFixed 123 :: Fixed E0)
+(True,16,&quot;11110110 00000001&quot;)
+
+&gt;&gt;&gt; test (MkFixed 123 :: Fixed E0) == test (MkFixed 123 :: Fixed E2)
+True
+-}</span><span>
+</span><span id="line-216"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679100413"><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Fixed</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100413"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-217"></span><span>    </span><span id="local-6989586621679099602"><span class="annot"><span class="annottext">encode :: Fixed a -&gt; Encoding
+</span><a href="#local-6989586621679099602"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">MkFixed</span></a></span><span> </span><span id="local-6989586621679099600"><span class="annot"><span class="annottext">Integer
+</span><a href="#local-6989586621679099600"><span class="hs-identifier hs-var">n</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var">encode</span></a></span><span> </span><span class="annot"><span class="annottext">Integer
+</span><a href="#local-6989586621679099600"><span class="hs-identifier hs-var">n</span></a></span><span>
+</span><span id="line-218"></span><span>
+</span><span id="line-219"></span><span>    </span><span id="local-6989586621679099598"><span class="annot"><span class="annottext">size :: Fixed a -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099598"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">MkFixed</span></a></span><span> </span><span id="local-6989586621679099597"><span class="annot"><span class="annottext">Integer
+</span><a href="#local-6989586621679099597"><span class="hs-identifier hs-var">n</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="annot"><span class="annottext">Integer
+</span><a href="#local-6989586621679099597"><span class="hs-identifier hs-var">n</span></a></span><span>
+</span><span id="line-220"></span><span>
+</span><span id="line-221"></span><span>    </span><span id="local-6989586621679099594"><span class="annot"><span class="annottext">decode :: Get (Fixed a)
+</span><a href="#local-6989586621679099594"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall k (a :: k). Integer -&gt; Fixed a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">MkFixed</span></a></span><span> </span><span class="annot"><span class="annottext">forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">&lt;$&gt;</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span>
+</span><span id="line-222"></span><span>
+</span><span id="line-223"></span><span class="hs-comment">{- |
+Word8 always take 8 bits.
+
+&gt;&gt;&gt; test (0::Word8)
+(True,8,&quot;00000000&quot;)
+
+&gt;&gt;&gt; test (255::Word8)
+(True,8,&quot;11111111&quot;)
+-}</span><span>
+</span><span id="line-232"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Word8</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-233"></span><span>    </span><span id="local-6989586621679099589"><span class="annot"><span class="annottext">encode :: Word8 -&gt; Encoding
+</span><a href="#local-6989586621679099589"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Word8 -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#eWord8"><span class="hs-identifier hs-var">eWord8</span></a></span><span>
+</span><span id="line-234"></span><span>
+</span><span id="line-235"></span><span>    </span><span id="local-6989586621679099587"><span class="annot"><span class="annottext">decode :: Get Word8
+</span><a href="#local-6989586621679099587"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Get Word8
+</span><a href="Flat.Decoder.Prim.html#dWord8"><span class="hs-identifier hs-var">dWord8</span></a></span><span>
+</span><span id="line-236"></span><span>
+</span><span id="line-237"></span><span>    </span><span id="local-6989586621679099585"><span class="annot"><span class="annottext">size :: Word8 -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099585"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Word8 -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Encoder.Strict.html#sWord8"><span class="hs-identifier hs-var">sWord8</span></a></span><span>
+</span><span id="line-238"></span><span>
+</span><span id="line-239"></span><span class="hs-comment">{- |
+Natural, Word, Word16, Word32 and Word64 are encoded as a non empty list of 7 bits chunks (least significant chunk first and most significant bit first in every chunk).
+
+Words are always encoded in a whole number of bytes, as every chunk is 8 bits long (1 bit for the List constructor, plus 7 bits for the value).
+
+The actual definition is:
+
+@
+Word64 &#8801;   Word64 Word
+
+Word32 &#8801;   Word32 Word
+
+Word16 &#8801;   Word16 Word
+
+Word &#8801;   Word (LeastSignificantFirst (NonEmptyList (MostSignificantFirst Word7)))
+
+LeastSignificantFirst a &#8801;   LeastSignificantFirst a
+
+NonEmptyList a &#8801;   Elem a
+                 | Cons a (NonEmptyList a)
+
+MostSignificantFirst a &#8801;   MostSignificantFirst a
+
+Word7 &#8801;   V0
+        | V1
+        | V2
+        ...
+        | V127
+@
+
+Values between as 0 and 127 fit in a single byte. 
+
+127 (0b1111111) is represented as Elem V127 and encoded as: Elem=0 127=1111111
+
+&gt;&gt;&gt; test (127::Word) 
+(True,8,&quot;01111111&quot;)
+
+254 (0b11111110) is represented as Cons V126 (Elem V1) (254=128+126) and encoded as: Cons=1 V126=1111110 (Elem=0 V1=0000001):
+
+&gt;&gt;&gt; test (254::Word)
+(True,16,&quot;11111110 00000001&quot;)
+
+Another example, 32768 (Ob1000000000000000 = 0000010 0000000 0000000):
+
+&gt;&gt;&gt; test (32768::Word32)
+(True,24,&quot;10000000 10000000 00000010&quot;)
+
+As this is a variable length encoding, values are encoded in the same way, whatever their type:
+
+&gt;&gt;&gt; all (test (3::Word) ==) [test (3::Word16),test (3::Word32),test (3::Word64)]
+True
+-}</span><span>
+</span><span id="line-291"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-type">Word</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-292"></span><span>    </span><span id="local-6989586621679099579"><span class="annot"><span class="annottext">size :: Word -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099579"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Word -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Encoder.Strict.html#sWord"><span class="hs-identifier hs-var">sWord</span></a></span><span>
+</span><span id="line-293"></span><span>
+</span><span id="line-294"></span><span>    </span><span id="local-6989586621679099577"><span class="annot"><span class="annottext">encode :: Word -&gt; Encoding
+</span><a href="#local-6989586621679099577"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Word -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#eWord"><span class="hs-identifier hs-var">eWord</span></a></span><span>
+</span><span id="line-295"></span><span>
+</span><span id="line-296"></span><span>    </span><span id="local-6989586621679099575"><span class="annot"><span class="annottext">decode :: Get Word
+</span><a href="#local-6989586621679099575"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Get Word
+</span><a href="Flat.Decoder.Strict.html#dWord"><span class="hs-identifier hs-var">dWord</span></a></span><span>
+</span><span id="line-297"></span><span>
+</span><span id="line-298"></span><span class="hs-comment">{- |
+Naturals are encoded just as the fixed size Words. 
+
+&gt;&gt;&gt; test (0::Natural)
+(True,8,&quot;00000000&quot;)
+
+&gt;&gt;&gt; test (2^120::Natural)
+(True,144,&quot;10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 00000010&quot;)
+-}</span><span>
+</span><span id="line-307"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/ghc-bignum-1.2/src"><span class="hs-identifier hs-type">Natural</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-308"></span><span>    </span><span id="local-6989586621679099569"><span class="annot"><span class="annottext">size :: Nat -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099569"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Nat -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Encoder.Strict.html#sNatural"><span class="hs-identifier hs-var">sNatural</span></a></span><span>
+</span><span id="line-309"></span><span>
+</span><span id="line-310"></span><span>    </span><span id="local-6989586621679099567"><span class="annot"><span class="annottext">encode :: Nat -&gt; Encoding
+</span><a href="#local-6989586621679099567"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Nat -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#eNatural"><span class="hs-identifier hs-var">eNatural</span></a></span><span>
+</span><span id="line-311"></span><span>
+</span><span id="line-312"></span><span>    </span><span id="local-6989586621679099565"><span class="annot"><span class="annottext">decode :: Get Nat
+</span><a href="#local-6989586621679099565"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Get Nat
+</span><a href="Flat.Decoder.Strict.html#dNatural"><span class="hs-identifier hs-var">dNatural</span></a></span><span>
+</span><span id="line-313"></span><span>
+</span><span id="line-314"></span><span>
+</span><span id="line-315"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Word16</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-316"></span><span>    </span><span id="local-6989586621679099559"><span class="annot"><span class="annottext">encode :: Word16 -&gt; Encoding
+</span><a href="#local-6989586621679099559"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Word16 -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#eWord16"><span class="hs-identifier hs-var">eWord16</span></a></span><span>
+</span><span id="line-317"></span><span>
+</span><span id="line-318"></span><span>    </span><span id="local-6989586621679099557"><span class="annot"><span class="annottext">decode :: Get Word16
+</span><a href="#local-6989586621679099557"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Get Word16
+</span><a href="Flat.Decoder.Strict.html#dWord16"><span class="hs-identifier hs-var">dWord16</span></a></span><span>
+</span><span id="line-319"></span><span>
+</span><span id="line-320"></span><span>    </span><span id="local-6989586621679099555"><span class="annot"><span class="annottext">size :: Word16 -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099555"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Word16 -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Encoder.Strict.html#sWord16"><span class="hs-identifier hs-var">sWord16</span></a></span><span>
+</span><span id="line-321"></span><span>
+</span><span id="line-322"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Word32</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-323"></span><span>    </span><span id="local-6989586621679099549"><span class="annot"><span class="annottext">encode :: Word32 -&gt; Encoding
+</span><a href="#local-6989586621679099549"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Word32 -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#eWord32"><span class="hs-identifier hs-var">eWord32</span></a></span><span>
+</span><span id="line-324"></span><span>
+</span><span id="line-325"></span><span>    </span><span id="local-6989586621679099547"><span class="annot"><span class="annottext">decode :: Get Word32
+</span><a href="#local-6989586621679099547"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Get Word32
+</span><a href="Flat.Decoder.Strict.html#dWord32"><span class="hs-identifier hs-var">dWord32</span></a></span><span>
+</span><span id="line-326"></span><span>
+</span><span id="line-327"></span><span>    </span><span id="local-6989586621679099545"><span class="annot"><span class="annottext">size :: Word32 -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099545"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Word32 -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Encoder.Strict.html#sWord32"><span class="hs-identifier hs-var">sWord32</span></a></span><span>
+</span><span id="line-328"></span><span>
+</span><span id="line-329"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Word64</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-330"></span><span>    </span><span id="local-6989586621679099539"><span class="annot"><span class="annottext">encode :: Word64 -&gt; Encoding
+</span><a href="#local-6989586621679099539"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Word64 -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#eWord64"><span class="hs-identifier hs-var">eWord64</span></a></span><span>
+</span><span id="line-331"></span><span>
+</span><span id="line-332"></span><span>    </span><span id="local-6989586621679099537"><span class="annot"><span class="annottext">decode :: Get Word64
+</span><a href="#local-6989586621679099537"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Get Word64
+</span><a href="Flat.Decoder.Strict.html#dWord64"><span class="hs-identifier hs-var">dWord64</span></a></span><span>
+</span><span id="line-333"></span><span>
+</span><span id="line-334"></span><span>    </span><span id="local-6989586621679099535"><span class="annot"><span class="annottext">size :: Word64 -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099535"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Word64 -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Encoder.Strict.html#sWord64"><span class="hs-identifier hs-var">sWord64</span></a></span><span>
+</span><span id="line-335"></span><span>
+</span><span id="line-336"></span><span>
+</span><span id="line-337"></span><span class="hs-comment">{- |
+Integer, Int, Int16, Int32 and Int64 are defined as the &lt;https://developers.google.com/protocol-buffers/docs/encoding#signed-integers ZigZag&gt; encoded version of the equivalent unsigned Word:
+
+@
+Int   &#8801;  Int   (ZigZag Word)
+
+Int64 &#8801;  Int64 (ZigZag Word64)
+
+Int32 &#8801;  Int32 (ZigZag Word32)
+
+Int16 &#8801;  Int16 (ZigZag Word16)
+
+Int8  &#8801;  Int8  (ZigZag Word8)
+
+ZigZag a &#8801; ZigZag a
+@
+
+ZigZag encoding alternates between positive and negative numbers, so that numbers whose absolute value is small can be encoded efficiently:
+
+&gt;&gt;&gt; test (0::Int)
+(True,8,&quot;00000000&quot;)
+
+&gt;&gt;&gt; test (-1::Int)
+(True,8,&quot;00000001&quot;)
+
+&gt;&gt;&gt; test (1::Int)
+(True,8,&quot;00000010&quot;)
+
+&gt;&gt;&gt; test (-2::Int)
+(True,8,&quot;00000011&quot;)
+
+&gt;&gt;&gt; test (2::Int)
+(True,8,&quot;00000100&quot;)
+-}</span><span>
+</span><span id="line-371"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-type">Int</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-372"></span><span>    </span><span id="local-6989586621679099529"><span class="annot"><span class="annottext">size :: NumBits -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099529"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">NumBits -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Encoder.Strict.html#sInt"><span class="hs-identifier hs-var">sInt</span></a></span><span>
+</span><span id="line-373"></span><span>
+</span><span id="line-374"></span><span>    </span><span id="local-6989586621679099527"><span class="annot"><span class="annottext">encode :: NumBits -&gt; Encoding
+</span><a href="#local-6989586621679099527"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">NumBits -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#eInt"><span class="hs-identifier hs-var">eInt</span></a></span><span>
+</span><span id="line-375"></span><span>
+</span><span id="line-376"></span><span>    </span><span id="local-6989586621679099525"><span class="annot"><span class="annottext">decode :: Get NumBits
+</span><a href="#local-6989586621679099525"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Get NumBits
+</span><a href="Flat.Decoder.Strict.html#dInt"><span class="hs-identifier hs-var">dInt</span></a></span><span>
+</span><span id="line-377"></span><span>
+</span><span id="line-378"></span><span class="hs-comment">{- |
+Integers are encoded just as the fixed size Ints. 
+
+&gt;&gt;&gt; test (0::Integer)
+(True,8,&quot;00000000&quot;)
+
+&gt;&gt;&gt; test (-1::Integer)
+(True,8,&quot;00000001&quot;)
+
+&gt;&gt;&gt; test (1::Integer)
+(True,8,&quot;00000010&quot;)
+
+&gt;&gt;&gt; test (-(2^4)::Integer)
+(True,8,&quot;00011111&quot;)
+
+&gt;&gt;&gt; test (2^4::Integer)
+(True,8,&quot;00100000&quot;)
+
+&gt;&gt;&gt; test (-(2^120)::Integer)
+(True,144,&quot;11111111 11111111 11111111 11111111 11111111 11111111 11111111 11111111 11111111 11111111 11111111 11111111 11111111 11111111 11111111 11111111 11111111 00000011&quot;)
+
+&gt;&gt;&gt; test (2^120::Integer)
+(True,144,&quot;10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 10000000 00000100&quot;)
+-}</span><span>
+</span><span id="line-402"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/ghc-bignum-1.2/src"><span class="hs-identifier hs-type">Integer</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-403"></span><span>    </span><span id="local-6989586621679099520"><span class="annot"><span class="annottext">size :: Integer -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099520"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Integer -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Encoder.Strict.html#sInteger"><span class="hs-identifier hs-var">sInteger</span></a></span><span>
+</span><span id="line-404"></span><span>
+</span><span id="line-405"></span><span>    </span><span id="local-6989586621679099518"><span class="annot"><span class="annottext">encode :: Integer -&gt; Encoding
+</span><a href="#local-6989586621679099518"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Integer -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#eInteger"><span class="hs-identifier hs-var">eInteger</span></a></span><span>
+</span><span id="line-406"></span><span>
+</span><span id="line-407"></span><span>    </span><span id="local-6989586621679099516"><span class="annot"><span class="annottext">decode :: Get Integer
+</span><a href="#local-6989586621679099516"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Get Integer
+</span><a href="Flat.Decoder.Strict.html#dInteger"><span class="hs-identifier hs-var">dInteger</span></a></span><span>
+</span><span id="line-408"></span><span>
+</span><span id="line-409"></span><span class="hs-comment">{-|
+&gt;&gt;&gt; test (0::Int8)
+(True,8,&quot;00000000&quot;)
+
+&gt;&gt;&gt; test (127::Int8)
+(True,8,&quot;11111110&quot;)
+
+&gt;&gt;&gt; test (-128::Int8)
+(True,8,&quot;11111111&quot;)
+-}</span><span>
+</span><span id="line-419"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Int8</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-420"></span><span>    </span><span id="local-6989586621679099510"><span class="annot"><span class="annottext">encode :: Int8 -&gt; Encoding
+</span><a href="#local-6989586621679099510"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int8 -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#eInt8"><span class="hs-identifier hs-var">eInt8</span></a></span><span>
+</span><span id="line-421"></span><span>
+</span><span id="line-422"></span><span>    </span><span id="local-6989586621679099508"><span class="annot"><span class="annottext">decode :: Get Int8
+</span><a href="#local-6989586621679099508"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Get Int8
+</span><a href="Flat.Decoder.Strict.html#dInt8"><span class="hs-identifier hs-var">dInt8</span></a></span><span>
+</span><span id="line-423"></span><span>
+</span><span id="line-424"></span><span>    </span><span id="local-6989586621679099506"><span class="annot"><span class="annottext">size :: Int8 -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099506"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int8 -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Encoder.Strict.html#sInt8"><span class="hs-identifier hs-var">sInt8</span></a></span><span>
+</span><span id="line-425"></span><span>
+</span><span id="line-426"></span><span class="hs-comment">{- |
+&gt;&gt;&gt; test (0::Int16)
+(True,8,&quot;00000000&quot;)
+
+&gt;&gt;&gt; test (1::Int16)
+(True,8,&quot;00000010&quot;)
+
+&gt;&gt;&gt; test (-1::Int16)
+(True,8,&quot;00000001&quot;)
+
+&gt;&gt;&gt; test (minBound::Int16)
+(True,24,&quot;11111111 11111111 00000011&quot;)
+
+equivalent to 0b1111111111111111
+
+&gt;&gt;&gt; test (maxBound::Int16)
+(True,24,&quot;11111110 11111111 00000011&quot;)
+
+equivalent to 0b1111111111111110
+-}</span><span>
+</span><span id="line-446"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Int16</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-447"></span><span>    </span><span id="local-6989586621679099500"><span class="annot"><span class="annottext">size :: Int16 -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099500"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int16 -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Encoder.Strict.html#sInt16"><span class="hs-identifier hs-var">sInt16</span></a></span><span>
+</span><span id="line-448"></span><span>
+</span><span id="line-449"></span><span>    </span><span id="local-6989586621679099498"><span class="annot"><span class="annottext">encode :: Int16 -&gt; Encoding
+</span><a href="#local-6989586621679099498"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int16 -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#eInt16"><span class="hs-identifier hs-var">eInt16</span></a></span><span>
+</span><span id="line-450"></span><span>
+</span><span id="line-451"></span><span>    </span><span id="local-6989586621679099496"><span class="annot"><span class="annottext">decode :: Get Int16
+</span><a href="#local-6989586621679099496"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Get Int16
+</span><a href="Flat.Decoder.Strict.html#dInt16"><span class="hs-identifier hs-var">dInt16</span></a></span><span>
+</span><span id="line-452"></span><span>
+</span><span id="line-453"></span><span class="hs-comment">{- |
+&gt;&gt;&gt; test (0::Int32)
+(True,8,&quot;00000000&quot;)
+
+&gt;&gt;&gt; test (minBound::Int32)
+(True,40,&quot;11111111 11111111 11111111 11111111 00001111&quot;)
+
+&gt;&gt;&gt; test (maxBound::Int32)
+(True,40,&quot;11111110 11111111 11111111 11111111 00001111&quot;)
+-}</span><span>
+</span><span id="line-463"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Int32</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-464"></span><span>    </span><span id="local-6989586621679099490"><span class="annot"><span class="annottext">size :: Int32 -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099490"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int32 -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Encoder.Strict.html#sInt32"><span class="hs-identifier hs-var">sInt32</span></a></span><span>
+</span><span id="line-465"></span><span>
+</span><span id="line-466"></span><span>    </span><span id="local-6989586621679099488"><span class="annot"><span class="annottext">encode :: Int32 -&gt; Encoding
+</span><a href="#local-6989586621679099488"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int32 -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#eInt32"><span class="hs-identifier hs-var">eInt32</span></a></span><span>
+</span><span id="line-467"></span><span>
+</span><span id="line-468"></span><span>    </span><span id="local-6989586621679099486"><span class="annot"><span class="annottext">decode :: Get Int32
+</span><a href="#local-6989586621679099486"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Get Int32
+</span><a href="Flat.Decoder.Strict.html#dInt32"><span class="hs-identifier hs-var">dInt32</span></a></span><span>
+</span><span id="line-469"></span><span>
+</span><span id="line-470"></span><span class="hs-comment">{- |
+&gt;&gt;&gt; test (0::Int64)
+(True,8,&quot;00000000&quot;)
+
+&gt;&gt;&gt; test (minBound::Int64)
+(True,80,&quot;11111111 11111111 11111111 11111111 11111111 11111111 11111111 11111111 11111111 00000001&quot;)
+
+&gt;&gt;&gt; test (maxBound::Int64)
+(True,80,&quot;11111110 11111111 11111111 11111111 11111111 11111111 11111111 11111111 11111111 00000001&quot;)
+-}</span><span>
+</span><span id="line-480"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Int64</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-481"></span><span>    </span><span id="local-6989586621679099480"><span class="annot"><span class="annottext">size :: Int64 -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099480"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int64 -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Encoder.Strict.html#sInt64"><span class="hs-identifier hs-var">sInt64</span></a></span><span>
+</span><span id="line-482"></span><span>
+</span><span id="line-483"></span><span>    </span><span id="local-6989586621679099478"><span class="annot"><span class="annottext">encode :: Int64 -&gt; Encoding
+</span><a href="#local-6989586621679099478"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Int64 -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#eInt64"><span class="hs-identifier hs-var">eInt64</span></a></span><span>
+</span><span id="line-484"></span><span>
+</span><span id="line-485"></span><span>    </span><span id="local-6989586621679099476"><span class="annot"><span class="annottext">decode :: Get Int64
+</span><a href="#local-6989586621679099476"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Get Int64
+</span><a href="Flat.Decoder.Strict.html#dInt64"><span class="hs-identifier hs-var">dInt64</span></a></span><span>
+</span><span id="line-486"></span><span>
+</span><span id="line-487"></span><span>
+</span><span id="line-488"></span><span class="hs-comment">{- |
+Floats are encoded as standard IEEE binary32 values:
+
+@
+IEEE_754_binary32 &#8801; IEEE_754_binary32 {sign :: Sign,
+                                        exponent :: MostSignificantFirst Bits8,
+                                        fraction :: MostSignificantFirst Bits23}
+@
+
+&gt;&gt;&gt; test (0::Float)
+(True,32,&quot;00000000 00000000 00000000 00000000&quot;)
+
+&gt;&gt;&gt; test (1.4012984643E-45::Float)
+(True,32,&quot;00000000 00000000 00000000 00000001&quot;)
+
+&gt;&gt;&gt; test (1.1754942107E-38::Float)
+(True,32,&quot;00000000 01111111 11111111 11111111&quot;)
+-}</span><span>
+</span><span id="line-506"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-type">Float</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-507"></span><span>    </span><span id="local-6989586621679099470"><span class="annot"><span class="annottext">size :: Float -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099470"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Float -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Encoder.Strict.html#sFloat"><span class="hs-identifier hs-var">sFloat</span></a></span><span>
+</span><span id="line-508"></span><span>
+</span><span id="line-509"></span><span>    </span><span id="local-6989586621679099468"><span class="annot"><span class="annottext">encode :: Float -&gt; Encoding
+</span><a href="#local-6989586621679099468"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Float -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#eFloat"><span class="hs-identifier hs-var">eFloat</span></a></span><span>
+</span><span id="line-510"></span><span>
+</span><span id="line-511"></span><span>    </span><span id="local-6989586621679099466"><span class="annot"><span class="annottext">decode :: Get Float
+</span><a href="#local-6989586621679099466"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Get Float
+</span><a href="Flat.Decoder.Prim.html#dFloat"><span class="hs-identifier hs-var">dFloat</span></a></span><span>
+</span><span id="line-512"></span><span>
+</span><span id="line-513"></span><span class="hs-comment">{- |
+Doubles are encoded as standard IEEE binary64 values:
+
+@
+IEEE_754_binary64 &#8801; IEEE_754_binary64 {sign :: Sign,
+                                        exponent :: MostSignificantFirst Bits11,
+                                        fraction :: MostSignificantFirst Bits52}
+@
+-}</span><span>
+</span><span id="line-522"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/ghc-prim-0.8.0/src"><span class="hs-identifier hs-type">Double</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-523"></span><span>    </span><span id="local-6989586621679099460"><span class="annot"><span class="annottext">size :: Double -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099460"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Double -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Encoder.Strict.html#sDouble"><span class="hs-identifier hs-var">sDouble</span></a></span><span>
+</span><span id="line-524"></span><span>
+</span><span id="line-525"></span><span>    </span><span id="local-6989586621679099458"><span class="annot"><span class="annottext">encode :: Double -&gt; Encoding
+</span><a href="#local-6989586621679099458"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Double -&gt; Encoding
+</span><a href="Flat.Encoder.Strict.html#eDouble"><span class="hs-identifier hs-var">eDouble</span></a></span><span>
+</span><span id="line-526"></span><span>
+</span><span id="line-527"></span><span>    </span><span id="local-6989586621679099456"><span class="annot"><span class="annottext">decode :: Get Double
+</span><a href="#local-6989586621679099456"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Get Double
+</span><a href="Flat.Decoder.Prim.html#dDouble"><span class="hs-identifier hs-var">dDouble</span></a></span><span>
+</span><span id="line-528"></span><span>
+</span><span id="line-529"></span><span class="hs-comment">{-|
+&gt;&gt;&gt; test (4 :+ 2 :: Complex Word8)
+(True,16,&quot;00000100 00000010&quot;)
+-}</span><span>
+</span><span id="line-533"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679099449"><span id="local-6989586621679099451"><span id="local-6989586621679099453"><span id="local-6989586621679100410"><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100410"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Complex</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100410"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span></span></span></span><span>
+</span><span id="line-534"></span><span>
+</span><span id="line-535"></span><span class="hs-comment">{-|
+Ratios are encoded as tuples of (numerator,denominator)
+
+&gt;&gt;&gt; test (3%4::Ratio Word8)
+(True,16,&quot;00000011 00000100&quot;)
+-}</span><span>
+</span><span id="line-541"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679100408"><span class="hs-special">(</span><span> </span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Integral</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100408"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100408"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">Ratio</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100408"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-542"></span><span>    </span><span id="local-6989586621679099441"><span class="annot"><span class="annottext">size :: Ratio a -&gt; NumBits -&gt; NumBits
+</span><a href="#local-6989586621679099441"><span class="hs-identifier hs-var hs-var hs-var hs-var">size</span></a></span></span><span> </span><span id="local-6989586621679099440"><span class="annot"><span class="annottext">Ratio a
+</span><a href="#local-6989586621679099440"><span class="hs-identifier hs-var">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; NumBits -&gt; NumBits
+</span><a href="Flat.Class.html#size"><span class="hs-identifier hs-var">size</span></a></span><span> </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">forall a. Ratio a -&gt; a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">numerator</span></a></span><span> </span><span class="annot"><span class="annottext">Ratio a
+</span><a href="#local-6989586621679099440"><span class="hs-identifier hs-var">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">forall a. Ratio a -&gt; a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">denominator</span></a></span><span> </span><span class="annot"><span class="annottext">Ratio a
+</span><a href="#local-6989586621679099440"><span class="hs-identifier hs-var">a</span></a></span><span> </span><span class="hs-special">)</span><span>
+</span><span id="line-543"></span><span>
+</span><span id="line-544"></span><span>    </span><span id="local-6989586621679099436"><span class="annot"><span class="annottext">encode :: Ratio a -&gt; Encoding
+</span><a href="#local-6989586621679099436"><span class="hs-identifier hs-var hs-var hs-var hs-var">encode</span></a></span></span><span> </span><span id="local-6989586621679099435"><span class="annot"><span class="annottext">Ratio a
+</span><a href="#local-6989586621679099435"><span class="hs-identifier hs-var">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; a -&gt; Encoding
+</span><a href="Flat.Class.html#encode"><span class="hs-identifier hs-var">encode</span></a></span><span> </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">forall a. Ratio a -&gt; a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">numerator</span></a></span><span> </span><span class="annot"><span class="annottext">Ratio a
+</span><a href="#local-6989586621679099435"><span class="hs-identifier hs-var">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">forall a. Ratio a -&gt; a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">denominator</span></a></span><span> </span><span class="annot"><span class="annottext">Ratio a
+</span><a href="#local-6989586621679099435"><span class="hs-identifier hs-var">a</span></a></span><span> </span><span class="hs-special">)</span><span>
+</span><span id="line-545"></span><span>
+</span><span id="line-546"></span><span>    </span><span class="hs-comment">-- decode = uncurry (%) &lt;$&gt; decode</span><span>
+</span><span id="line-547"></span><span>    </span><span id="local-6989586621679099429"><span class="annot"><span class="annottext">decode :: Get (Ratio a)
+</span><a href="#local-6989586621679099429"><span class="hs-identifier hs-var hs-var hs-var hs-var">decode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (m :: * -&gt; *) a1 a2 r.
+Monad m =&gt;
+(a1 -&gt; a2 -&gt; r) -&gt; m a1 -&gt; m a2 -&gt; m r
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-var">liftM2</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Integral a =&gt; a -&gt; a -&gt; Ratio a
+</span><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-operator hs-var">(%)</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span> </span><span class="annot"><span class="annottext">forall a. Flat a =&gt; Get a
+</span><a href="Flat.Class.html#decode"><span class="hs-identifier hs-var">decode</span></a></span><span>
+</span><span id="line-548"></span><span>
+</span><span id="line-549"></span><span class="hs-comment">{-|
+&gt;&gt;&gt; test ([]::[Bool])
+(True,1,&quot;0&quot;)
+
+&gt;&gt;&gt; test [False,False]
+(True,5,&quot;10100&quot;)
+
+This instance and other similar ones are declared as @OVERLAPPABLE@, because for better encoding/decoding
+performance it can be useful to declare instances of concrete types, such as @[Char]@ (not provided out of the box).
+-}</span><span>
+</span><span id="line-559"></span><span class="hs-keyword">instance</span><span> </span><span class="hs-pragma">{-# OVERLAPPABLE</span><span> </span><span class="hs-pragma">#-}</span><span id="local-6989586621679099422"><span id="local-6989586621679099424"><span id="local-6989586621679099426"><span id="local-6989586621679100399"><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100399"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">[</span><span> </span><span class="annot"><a href="#local-6989586621679100399"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-special">]</span></span></span></span></span><span>
+</span><span id="line-560"></span><span>
+</span><span id="line-561"></span><span class="hs-comment">-- Generic list instance (stack overflows with ETA, see https://github.com/typelead/eta/issues/901)</span><span>
+</span><span id="line-562"></span><span class="hs-comment">-- where</span><span>
+</span><span id="line-563"></span><span class="hs-comment">--size [] n = n+1</span><span>
+</span><span id="line-564"></span><span class="hs-comment">--size (h:t) n = trampoline size t (trampoline size h (n+1))</span><span>
+</span><span id="line-565"></span><span class="hs-comment">-- size = sizeListWith size -- foldl' (\n e -&gt; ) n</span><span>
+</span><span id="line-566"></span><span class="hs-comment">-- encode = error &quot;BAD&quot;</span><span>
+</span><span id="line-567"></span><span class="hs-comment">-- encode = trampoline . encodeListWith encode</span><span>
+</span><span id="line-568"></span><span class="hs-comment">-- decode = decodeListWith decode</span><span>
+</span><span id="line-569"></span><span class="hs-comment">-- sizeListWith siz l n = foldl' (\n e -&gt; 1 + n + siz e 0) n l</span><span>
+</span><span id="line-570"></span><span class="hs-comment">-- #ifdef ETA_VERSION</span><span>
+</span><span id="line-571"></span><span class="hs-comment">-- import Data.Function(trampoline)</span><span>
+</span><span id="line-572"></span><span class="hs-comment">-- import GHC.IO(trampolineIO)</span><span>
+</span><span id="line-573"></span><span class="hs-comment">-- #else</span><span>
+</span><span id="line-574"></span><span class="hs-comment">-- trampoline = id</span><span>
+</span><span id="line-575"></span><span class="hs-comment">-- trampolineIO = id</span><span>
+</span><span id="line-576"></span><span class="hs-comment">-- #endif</span><span>
+</span><span id="line-577"></span><span>
+</span><span id="line-578"></span><span>
+</span><span id="line-579"></span><span class="hs-comment">-- #if MIN_VERSION_base(4,9,0)</span><span>
+</span><span id="line-580"></span><span class="hs-comment">{-|
+&gt;&gt;&gt; test (B.fromList [True])
+(True,2,&quot;10&quot;)
+
+&gt;&gt;&gt; test (B.fromList [False,False])
+(True,4,&quot;0100&quot;)
+-}</span><span>
+</span><span id="line-587"></span><span class="hs-keyword">instance</span><span> </span><span class="hs-pragma">{-# OVERLAPPABLE</span><span> </span><span class="hs-pragma">#-}</span><span id="local-6989586621679099416"><span id="local-6989586621679099418"><span id="local-6989586621679099420"><span id="local-6989586621679100398"><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100398"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="../../../../ghc/html/libraries/base-4.16.4.0/src"><span class="hs-identifier hs-type">B.NonEmpty</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100398"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span></span></span></span><span>
+</span><span id="line-588"></span><span class="hs-comment">-- #endif</span><span>
+</span><span id="line-589"></span><span>
+</span><span id="line-590"></span><span class="hs-comment">{- |
+Tuples are supported up to 7 elements.
+
+&gt;&gt;&gt; test (False,())
+(True,1,&quot;0&quot;)
+
+&gt;&gt;&gt; test ((),())
+(True,0,&quot;&quot;)
+
+&quot;7 elements tuples ought to be enough for anybody&quot; (Bill Gates - apocryphal)
+
+&gt;&gt;&gt; test (False,True,True,True,False,True,True)
+(True,7,&quot;0111011&quot;)
+
+tst (1::Int,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,&quot;5&quot;,&quot;6&quot;,&quot;7&quot;,&quot;8&quot;)
+...error
+-}</span><span>
+</span><span id="line-607"></span><span>
+</span><span id="line-608"></span><span class="hs-comment">-- Not sure if these should be OVERLAPPABLE</span><span>
+</span><span id="line-609"></span><span class="hs-keyword">instance</span><span> </span><span class="hs-pragma">{-# OVERLAPPABLE</span><span> </span><span class="hs-pragma">#-}</span><span id="local-6989586621679099410"><span id="local-6989586621679099412"><span id="local-6989586621679099414"><span id="local-6989586621679100406"><span id="local-6989586621679100407"><span class="hs-special">(</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100407"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100406"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="#local-6989586621679100407"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100406"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-special">)</span></span></span></span></span></span><span>
+</span><span id="line-610"></span><span>
+</span><span id="line-611"></span><span class="hs-keyword">instance</span><span> </span><span class="hs-pragma">{-# OVERLAPPABLE</span><span> </span><span class="hs-pragma">#-}</span><span id="local-6989586621679099404"><span id="local-6989586621679099406"><span id="local-6989586621679099408"><span id="local-6989586621679100395"><span id="local-6989586621679100396"><span id="local-6989586621679100397"><span class="hs-special">(</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100397"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100396"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100395"><span class="hs-identifier hs-type">c</span></a></span><span> </span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="#local-6989586621679100397"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100396"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100395"><span class="hs-identifier hs-type">c</span></a></span><span> </span><span class="hs-special">)</span></span></span></span></span></span></span><span>
+</span><span id="line-612"></span><span>
+</span><span id="line-613"></span><span class="hs-keyword">instance</span><span> </span><span class="hs-pragma">{-# OVERLAPPABLE</span><span> </span><span class="hs-pragma">#-}</span><span id="local-6989586621679099398"><span id="local-6989586621679099400"><span id="local-6989586621679099402"><span id="local-6989586621679100391"><span id="local-6989586621679100392"><span id="local-6989586621679100393"><span id="local-6989586621679100394"><span class="hs-special">(</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100394"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100393"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100392"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100391"><span class="hs-identifier hs-type">d</span></a></span><span> </span><span class="hs-special">)</span><span>
+</span><span id="line-614"></span><span>    </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="#local-6989586621679100394"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100393"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100392"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100391"><span class="hs-identifier hs-type">d</span></a></span><span> </span><span class="hs-special">)</span></span></span></span></span></span></span></span><span>
+</span><span id="line-615"></span><span>
+</span><span id="line-616"></span><span class="hs-keyword">instance</span><span> </span><span class="hs-pragma">{-# OVERLAPPABLE</span><span> </span><span class="hs-pragma">#-}</span><span id="local-6989586621679099392"><span id="local-6989586621679099394"><span id="local-6989586621679099396"><span id="local-6989586621679100386"><span id="local-6989586621679100387"><span id="local-6989586621679100388"><span id="local-6989586621679100389"><span id="local-6989586621679100390"><span class="hs-special">(</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100390"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100389"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100388"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100387"><span class="hs-identifier hs-type">d</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100386"><span class="hs-identifier hs-type">e</span></a></span><span> </span><span class="hs-special">)</span><span>
+</span><span id="line-617"></span><span>    </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="#local-6989586621679100390"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100389"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100388"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100387"><span class="hs-identifier hs-type">d</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100386"><span class="hs-identifier hs-type">e</span></a></span><span> </span><span class="hs-special">)</span></span></span></span></span></span></span></span></span><span>
+</span><span id="line-618"></span><span>
+</span><span id="line-619"></span><span class="hs-keyword">instance</span><span> </span><span class="hs-pragma">{-# OVERLAPPABLE</span><span> </span><span class="hs-pragma">#-}</span><span id="local-6989586621679099386"><span id="local-6989586621679099388"><span id="local-6989586621679099390"><span id="local-6989586621679100380"><span id="local-6989586621679100381"><span id="local-6989586621679100382"><span id="local-6989586621679100383"><span id="local-6989586621679100384"><span id="local-6989586621679100385"><span class="hs-special">(</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100385"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100384"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100383"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100382"><span class="hs-identifier hs-type">d</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100381"><span class="hs-identifier hs-type">e</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100380"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-special">)</span><span>
+</span><span id="line-620"></span><span>    </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="#local-6989586621679100385"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100384"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100383"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100382"><span class="hs-identifier hs-type">d</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100381"><span class="hs-identifier hs-type">e</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100380"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-special">)</span></span></span></span></span></span></span></span></span></span><span>
+</span><span id="line-621"></span><span>
+</span><span id="line-622"></span><span class="hs-keyword">instance</span><span> </span><span class="hs-pragma">{-# OVERLAPPABLE</span><span> </span><span class="hs-pragma">#-}</span><span id="local-6989586621679099380"><span id="local-6989586621679099382"><span id="local-6989586621679099384"><span id="local-6989586621679100373"><span id="local-6989586621679100374"><span id="local-6989586621679100375"><span id="local-6989586621679100376"><span id="local-6989586621679100377"><span id="local-6989586621679100378"><span id="local-6989586621679100379"><span class="hs-special">(</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100379"><span class="hs-identifier hs-type">a</span></a></span><span>
+</span><span id="line-623"></span><span>                             </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100378"><span class="hs-identifier hs-type">b</span></a></span><span>
+</span><span id="line-624"></span><span>                             </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100377"><span class="hs-identifier hs-type">c</span></a></span><span>
+</span><span id="line-625"></span><span>                             </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100376"><span class="hs-identifier hs-type">d</span></a></span><span>
+</span><span id="line-626"></span><span>                             </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100375"><span class="hs-identifier hs-type">e</span></a></span><span>
+</span><span id="line-627"></span><span>                             </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100374"><span class="hs-identifier hs-type">f</span></a></span><span>
+</span><span id="line-628"></span><span>                             </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679100373"><span class="hs-identifier hs-type">g</span></a></span><span>
+</span><span id="line-629"></span><span>                             </span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Flat.Class.html#Flat"><span class="hs-identifier hs-type">Flat</span></a></span><span> </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="#local-6989586621679100379"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100378"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100377"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100376"><span class="hs-identifier hs-type">d</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100375"><span class="hs-identifier hs-type">e</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100374"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679100373"><span class="hs-identifier hs-type">g</span></a></span><span> </span><span class="hs-special">)</span></span></span></span></span></span></span></span></span></span></span><span>
+</span><span id="line-630"></span><span>
+</span><span id="line-631"></span><span>
+</span><span id="line-632"></span></pre></body></html>
